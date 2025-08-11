@@ -1,0 +1,7 @@
+sudo su git
+cd /var/lib/git
+cd username ke andar uske files honge
+ 
+
+
+Paraphrase : github collabhub
