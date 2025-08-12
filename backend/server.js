@@ -1,15 +1,18 @@
 const express = require("express");
 const cors = require("cors");
-const { PORT } = require('./config/constants');
-const routes = require('./routes');
+const { PORT } = require("./config/constants");
+const routes = require("./routes");
 
 const app = express();
 
-// Middleware
-app.use(cors());
+app.use(
+	cors({
+		origin: "*",
+	})
+);
 
 // Routes
-app.use('/', routes);
+app.use("/", routes);
 
 // Start server
 app.listen(PORT, () => {
