@@ -6,7 +6,7 @@ import RepositoryHeader from "./RepositoryHeader";
 import LoadingState from "./LoadingState";
 import RepositoryTabs from "./RepositoryTabs";
 
-const API_BASE = "http://localhost:3000"; // Or your deployed IP
+const API_BASE = "http://localhost:5000"; // Or your deployed IP
 
 export default function Log() {
   const [repos, setRepos] = useState([]);

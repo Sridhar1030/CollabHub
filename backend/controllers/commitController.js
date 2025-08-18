@@ -1,21 +1,17 @@
-const { exec } = require("child_process");
-const { EC2_USER, EC2_IP, PEM_PATH } = require('../config/constants');
+const axios = require('axios');
+const { EC2_API_URL } = require('../config/constants');
 
-const getCommitDiff = (req, res) => {
-	const { username, repo, hash } = req.params;
+const getCommitDiff = async (req, res) => {
+    const { username, repo, hash } = req.params;
 
-	const remoteGitDir = `/var/lib/git/${username}/${repo}.git`;
-
-	const sshDiffCmd = `ssh -i "${PEM_PATH}" -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "git --git-dir=${remoteGitDir} show ${hash} --no-color"`;
-
-	exec(sshDiffCmd, (err, stdout, stderr) => {
-		if (err) {
-			return res.status(500).json({ error: stderr || err.message });
-		}
-		res.send(stdout);
-	});
+    try {
+        const response = await axios.get(`${EC2_API_URL}/diff/${username}/${repo}/${hash}`);
+        res.send(response.data);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
 };
 
 module.exports = {
-	getCommitDiff
-}; 
+    getCommitDiff
+};

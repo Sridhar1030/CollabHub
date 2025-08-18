@@ -1,0 +1,39 @@
+{
+	"name": "collabhub-conflict-detection",
+	"displayName": "CollabHub Conflict Detection",
+	"description": "Real-time collaboration and conflict detection for CollabHub Git Server.",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.85.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "collabhub.showBranch",
+				"title": "CollabHub: Show Current Branch"
+			},
+			{
+				"command": "collabhub.getChanges",
+				"title": "CollabHub: Show Recent Changes"
+			}
+		]
+	},
+	"scripts": {
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "vscode-test"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.85.0",
+		"@types/mocha": "^10.0.10",
+		"@types/node": "22.x",
+		"eslint": "^9.32.0",
+		"@vscode/test-cli": "^0.0.11",
+		"@vscode/test-electron": "^2.5.2"
+	}
+}
