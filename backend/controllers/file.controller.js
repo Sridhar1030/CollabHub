@@ -2,7 +2,13 @@ const axios = require('axios');
 const { EC2_API_URL } = require('../config/constants');
 
 const getFileContent = async (req, res) => {
-    const { username, repo } = req.params;
+    // const { username, repo } = req.params;
+    const username = req.params[0];
+    const repo = req.params[1];
+    // console.log(objects(req.params)); // Removed undefined reference
+    console.log("inside get file content" + username + " " + repo);
+    console.log("req.params:", req.params[0]);
+    console.dir(req.params ,  { depth: null, colors: true });
     // The rest of the path is now the filepath
     const filepath = req.params[0];
 

@@ -2,13 +2,14 @@ const axios = require('axios');
 const { EC2_API_URL } = require('../config/constants');
 
 const getFileTree = async (req, res) => {
-	console.log("inside get file tree")
+	// console.log("inside get file tree" + username + " " + repo);
     const { username, repo } = req.params;
-
+    console.log("inside get file tree" + username + " " + repo);
     try {
 		console.log("calling tree")
         const response = await axios.get(`${EC2_API_URL}/tree/${username}/${repo}`);
         console.log("File tree fetched successfully.");
+        console.log(response.data);
         res.json(response.data);
     } catch (error) {
         console.error("Error fetching file tree:", error.response?.data || error.message);

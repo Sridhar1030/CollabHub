@@ -4,7 +4,7 @@ const USER_KEYS = {
 	sridhar: "abc123",
 	testuser: "xyz789",
 };
-const EC2_API_URL = "http://13.200.241.196:3000";
+const EC2_API_URL = "http://3.108.234.37:3000";
 
 const EC2_USER = "git"; // or ec2-user for Amazon Linux
 const EC2_IP = "13.200.241.196";
