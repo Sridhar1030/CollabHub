@@ -44,6 +44,21 @@ A VS Code extension for:
 - Change tracking
 - Direct integration with CollabHub server
 
+## 📚 Documentation
+
+For comprehensive documentation, please refer to:
+
+- **[API Documentation](docs/API.md)** - Complete REST API reference
+- **[Architecture Guide](docs/ARCHITECTURE.md)** - System design and architecture
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment instructions  
+- **[Contributing Guidelines](docs/CONTRIBUTING.md)** - How to contribute to the project
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+
+### Component Documentation
+- **[Frontend README](collabFrontend/README.md)** - React application documentation
+- **[Backend README](backend/README.md)** - Express.js server documentation
+- **[Extension README](extension/collabhub-conflict-detection/README.md)** - VS Code extension documentation
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -51,56 +66,133 @@ A VS Code extension for:
 - Git
 - VS Code (for extension development)
 
-### Frontend Setup
-```bash
-cd collabFrontend
-npm install
-npm run dev
-```
+### Quick Start
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Sridhar1030/CollabHub.git
+   cd CollabHub
+   ```
 
-### Backend Setup
-```bash
-cd backend
-npm install
-npm run dev
-```
+2. **Backend Setup**:
+   ```bash
+   cd backend
+   npm install
+   npm run dev
+   ```
 
-### VS Code Extension Setup
-```bash
-cd extension/collabhub-conflict-detection
-npm install
-# Press F5 in VS Code to start debugging
-```
+3. **Frontend Setup**:
+   ```bash
+   cd ../collabFrontend
+   npm install
+   npm run dev
+   ```
+
+4. **VS Code Extension Setup**:
+   ```bash
+   cd ../extension/collabhub-conflict-detection
+   npm install
+   # Press F5 in VS Code to start debugging
+   ```
+
+Visit `http://localhost:3000` to access the application.
 
 ## 🛠️ Development Scripts
 
 ### Frontend
-- `npm run dev` - Start development server
+- `npm run dev` - Start development server with hot reload
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- `npm run lint` - Run ESLint for code quality
 
 ### Backend
 - `npm run dev` - Start development server
-- `npm test` - Run tests
+- `npm start` - Start production server
+- `npm test` - Run tests (when implemented)
 
 ### VS Code Extension
 - `npm run lint` - Run ESLint
-- `npm run test` - Run tests
+- `npm run test` - Run extension tests
+- `vsce package` - Package extension for distribution
 
 ## 🔧 Configuration
 
-The application can be configured through various configuration files:
+### Environment Variables
 
-- Frontend: `vite.config.js`, `tailwind.config.js`
-- Backend: `config/constants.js`
-- Extension: `package.json` contributes section
+#### Backend Configuration
+Create `.env` files for different environments:
+
+```bash
+# .env.development
+NODE_ENV=development
+PORT=5000
+EC2_API_URL=http://13.200.241.196:3000
+DEBUG=true
+
+# .env.production  
+NODE_ENV=production
+PORT=5000
+EC2_API_URL=http://13.200.241.196:3000
+LOG_LEVEL=info
+```
+
+#### Frontend Configuration
+```bash
+# .env.development
+VITE_API_URL=http://localhost:5000
+VITE_WS_URL=ws://localhost:5000
+
+# .env.production
+VITE_API_URL=https://api.yourdomain.com
+VITE_WS_URL=wss://api.yourdomain.com
+```
+
+### Configuration Files
+- **Frontend**: `vite.config.js`, `tailwind.config.js`, `eslint.config.js`
+- **Backend**: `config/constants.js`, `package.json`
+- **Extension**: `package.json` contributes section, `.vscode/launch.json`
+
+For detailed configuration options, see the respective component documentation.
 
 ## 🤝 Contributing
 
+We welcome contributions from the community! Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) for detailed information on:
+
+- Code of Conduct
+- Development setup
+- Coding standards
+- Pull request process
+- Issue reporting
+
+### Quick Contribution Steps
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Make your changes and add tests
+4. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the branch (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request
+
+For detailed guidelines, see [CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+If you encounter any issues or have questions:
+
+1. Check the [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
+2. Search existing [GitHub Issues](https://github.com/Sridhar1030/CollabHub/issues)
+3. Create a new issue with detailed information
+4. Join our community discussions
+
+## 🙏 Acknowledgments
+
+- Built with modern web technologies
+- Inspired by collaborative development needs
+- Community contributions and feedback
+
+---
+
+Made with ❤️ by the CollabHub team
 
