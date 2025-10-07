@@ -24,7 +24,7 @@ export default function RepositoryTabs({ logs, selectedRepo }) {
     },
     {
       id: 'history',
-      name: 'History',
+      name: 'Commits',
       icon: (
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
@@ -35,9 +35,9 @@ export default function RepositoryTabs({ logs, selectedRepo }) {
   ];
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-      {/* Tab Headers */}
-      <div className="border-b border-gray-700 bg-gray-800">
+    <div className="glass-dark rounded-xl overflow-hidden shadow-glass-lg animate-slide-down">
+      {/* Tab Headers - GitHub Style */}
+      <div className="border-b border-white/10">
         <div className="flex px-6">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -50,20 +50,22 @@ export default function RepositoryTabs({ logs, selectedRepo }) {
                   e.stopPropagation();
                   handleTabClick(tab.id);
                 }}
-                className={`relative py-4 px-4 mr-8 border-b-2 font-medium text-sm flex items-center space-x-2 transition-all duration-200 cursor-pointer hover:text-gray-300 ${
+                className={`relative py-4 px-5 border-b-2 font-semibold text-sm flex items-center space-x-2 transition-all duration-200 cursor-pointer group ${
                   isActive
-                    ? 'border-blue-500 text-blue-400'
-                    : 'border-transparent text-gray-400 hover:border-gray-600'
+                    ? 'border-blue-500 text-white'
+                    : 'border-transparent text-gray-400 hover:text-white hover:border-white/20'
                 }`}
                 style={{ zIndex: 10 }}
               >
-                {tab.icon}
+                <span className={`${isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-blue-500'} transition-colors`}>
+                  {tab.icon}
+                </span>
                 <span>{tab.name}</span>
                 {tab.count !== null && (
-                  <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
+                  <span className={`ml-2 py-0.5 px-2.5 rounded-full text-xs font-medium ${
                     isActive
-                      ? 'bg-blue-500/20 text-blue-300'
-                      : 'bg-gray-700 text-gray-400'
+                      ? 'bg-blue-500/20 text-blue-500'
+                      : 'glass text-gray-400'
                   }`}>
                     {tab.count}
                   </span>
