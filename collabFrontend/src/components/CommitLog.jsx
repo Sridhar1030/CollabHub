@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-const API_BASE = "http://localhost:3000"
+const API_BASE = "http://localhost:5000"
 
 export default function CommitLog({ logs, selectedRepo }) {
   console.log('logs', logs)
