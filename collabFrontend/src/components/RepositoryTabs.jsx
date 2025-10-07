@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import CommitLog from './CommitLog';
 import CodeBaseFiles from './CodebaseFiles'; // Assuming the file is named CodeBaseFiles.jsx
+import Issues from './Issues';
+import { useCollaborators } from '../hooks/useCollaborators';
 
 export default function RepositoryTabs({ logs, selectedRepo }) {
   const [activeTab, setActiveTab] = useState('code');
   const username = "sridhar";
+  const { collaborators } = useCollaborators(username, selectedRepo);
 
   const handleTabClick = (tabId) => {
     console.log('Tab clicked:', tabId);
@@ -28,6 +31,16 @@ export default function RepositoryTabs({ logs, selectedRepo }) {
       icon: (
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+        </svg>
+      ),
+      count: null
+    },
+    {
+      id: 'issues',
+      name: 'Issues',
+      icon: (
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
         </svg>
       ),
       count: null
@@ -88,6 +101,12 @@ export default function RepositoryTabs({ logs, selectedRepo }) {
         {activeTab === 'history' && (
           <div className="p-0">
             <CommitLog logs={logs} selectedRepo={selectedRepo} />
+          </div>
+        )}
+
+        {activeTab === 'issues' && (
+          <div className="p-6">
+            <Issues username={username} repo={selectedRepo} collaborators={collaborators} />
           </div>
         )}
       </div>

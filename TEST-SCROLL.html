@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll Test - Isolated Modal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      font-family: system-ui, -apple-system, sans-serif;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    /* Page content to test background scroll lock */
+    .page-content {
+      padding: 40px;
+      height: 200vh;
+    }
+
+    .page-content h1 {
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .page-content p {
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Modal Container */
+    .modal-container {
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Modal Header */
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .modal-header h2 {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .modal-header p {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    /* Scrollable Content - THE CRITICAL PART */
+    .modal-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      padding: 24px;
+      position: relative;
+    }
+
+    /* Custom Scrollbar */
+    .modal-content::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #ccc;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Visual Indicators */
+    .scroll-indicator {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .scroll-indicator div {
+      margin-bottom: 4px;
+    }
+
+    .scroll-indicator div:last-child {
+      margin-bottom: 0;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+
+    .status.yes {
+      background: #10b981;
+      color: white;
+    }
+
+    .status.no {
+      background: #ef4444;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator">
+    <div>
+      <strong>📊 Scroll Status:</strong>
+    </div>
+    <div>
+      Modal Scroll: <span id="modalScroll" class="status no">0px</span>
+    </div>
+    <div>
+      Body Locked: <span id="bodyLock" class="status no">NO</span>
+    </div>
+    <div>
+      Scrollable: <span id="canScroll" class="status no">NO</span>
+    </div>
+  </div>
+
+  <!-- Page Content (to test background scroll lock) -->
+  <div class="page-content">
+    <h1>🧪 Scroll Test Page</h1>
+    <p>This page has lots of content to test if background scrolling is locked when modal opens.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <p>Scroll down to see more content...</p>
+    
+    <div style="margin: 40px 0;">
+      <button onclick="openModal()" class="btn btn-primary" style="width: 200px;">
+        🚀 Open Modal
+      </button>
+    </div>
+
+    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.</p>
+    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.</p>
+    
+    <h2 style="color: white; margin-top: 40px;">Instructions:</h2>
+    <ol style="color: #ccc; line-height: 2; margin-left: 20px;">
+      <li>Click "Open Modal" button above</li>
+      <li>Try to scroll inside the modal form</li>
+      <li>Check the scroll status indicator (top-left)</li>
+      <li>Try to scroll this page (should be locked)</li>
+      <li>Try mouse wheel, scrollbar dragging, and arrow keys</li>
+    </ol>
+
+    <div style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <h2 style="color: white;">⬇️ Keep Scrolling ⬇️</h2>
+    </div>
+
+    <div style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <h2 style="color: white;">Almost there...</h2>
+    </div>
+
+    <div style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <h2 style="color: white;">🎉 You reached the bottom!</h2>
+    </div>
+  </div>
+
+  <!-- Modal (Hidden by default) -->
+  <div id="modalBackdrop" class="modal-backdrop hidden" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-container" onclick="event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <h2>Create New Issue</h2>
+        <p>Fill out the form below to create a new issue</p>
+        <button class="close-button" onclick="closeModal()">✕</button>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div id="modalContent" class="modal-content">
+        <form onsubmit="handleSubmit(event)">
+          <div class="form-group">
+            <label>Title *</label>
+            <input type="text" placeholder="Enter issue title" required />
+          </div>
+
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea placeholder="Describe the issue in detail" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Priority</label>
+            <select>
+              <option value="low">🟢 Low</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="high">🔴 High</option>
+              <option value="urgent">⚠️ Urgent</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Category</label>
+            <select>
+              <option value="bug">🐛 Bug</option>
+              <option value="feature">✨ Feature</option>
+              <option value="improvement">📈 Improvement</option>
+              <option value="documentation">📚 Documentation</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Assignees</label>
+            <input type="text" placeholder="Select assignees" />
+          </div>
+
+          <div class="form-group">
+            <label>Labels</label>
+            <input type="text" placeholder="Add labels (comma separated)" />
+          </div>
+
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" />
+          </div>
+
+          <div class="form-group">
+            <label>Additional Notes</label>
+            <textarea placeholder="Any additional information"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Attachments</label>
+            <input type="file" multiple />
+          </div>
+
+          <div class="form-group">
+            <label>Related Issues</label>
+            <input type="text" placeholder="Link related issues" />
+          </div>
+
+          <!-- More fields to make scrolling necessary -->
+          <div class="form-group">
+            <label>Estimated Time (hours)</label>
+            <input type="number" placeholder="0" min="0" />
+          </div>
+
+          <div class="form-group">
+            <label>Tags</label>
+            <input type="text" placeholder="frontend, backend, api" />
+          </div>
+
+          <div class="button-group">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Create Issue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalContent = document.getElementById('modalContent');
+    const modalScrollIndicator = document.getElementById('modalScroll');
+    const bodyLockIndicator = document.getElementById('bodyLock');
+    const canScrollIndicator = document.getElementById('canScroll');
+
+    function openModal() {
+      // Show modal
+      modalBackdrop.classList.remove('hidden');
+      
+      // Lock body scroll
+      document.body.style.overflow = 'hidden';
+      
+      // Update indicators
+      updateScrollStatus();
+      
+      // Start monitoring
+      modalContent.addEventListener('scroll', updateScrollStatus);
+    }
+
+    function closeModal() {
+      // Hide modal
+      modalBackdrop.classList.add('hidden');
+      
+      // Unlock body scroll
+      document.body.style.overflow = 'unset';
+      
+      // Stop monitoring
+      modalContent.removeEventListener('scroll', updateScrollStatus);
+      
+      // Update indicators
+      updateScrollStatus();
+    }
+
+    function closeModalOnBackdrop(event) {
+      if (event.target === event.currentTarget) {
+        closeModal();
+      }
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      alert('✅ Form submitted successfully!\n\nThis proves scrolling is working - you could reach the submit button!');
+      closeModal();
+    }
+
+    function updateScrollStatus() {
+      // Check modal scroll position
+      const scrollTop = modalContent.scrollTop;
+      modalScrollIndicator.textContent = Math.round(scrollTop) + 'px';
+      modalScrollIndicator.className = scrollTop > 0 ? 'status yes' : 'status no';
+      
+      // Check if body is locked
+      const bodyLocked = document.body.style.overflow === 'hidden';
+      bodyLockIndicator.textContent = bodyLocked ? 'YES' : 'NO';
+      bodyLockIndicator.className = bodyLocked ? 'status yes' : 'status no';
+      
+      // Check if modal can scroll
+      const canScroll = modalContent.scrollHeight > modalContent.clientHeight;
+      canScrollIndicator.textContent = canScroll ? 'YES' : 'NO';
+      canScrollIndicator.className = canScroll ? 'status yes' : 'status no';
+    }
+
+    // Test scroll capability on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      updateScrollStatus();
+      
+      // Log diagnostic info to console
+      console.log('🔧 Scroll Test Ready!');
+      console.log('Modal Content Element:', modalContent);
+      console.log('Computed Styles:', getComputedStyle(modalContent));
+      
+      // Add helper functions to window
+      window.testScroll = function() {
+        console.log('📊 Scroll Test Results:');
+        console.log('- Scroll Height:', modalContent.scrollHeight, 'px');
+        console.log('- Client Height:', modalContent.clientHeight, 'px');
+        console.log('- Scroll Top:', modalContent.scrollTop, 'px');
+        console.log('- Can Scroll:', modalContent.scrollHeight > modalContent.clientHeight);
+        console.log('- Overflow Y:', getComputedStyle(modalContent).overflowY);
+        console.log('- Flex:', getComputedStyle(modalContent).flex);
+        console.log('- Min Height:', getComputedStyle(modalContent).minHeight);
+      };
+      
+      window.forceScroll = function(pixels = 100) {
+        modalContent.scrollTop = pixels;
+        console.log('🔧 Forced scroll to:', pixels, 'px');
+        console.log('✅ Actual scroll position:', modalContent.scrollTop, 'px');
+      };
+      
+      console.log('💡 Helper functions available:');
+      console.log('- testScroll() - Check scroll properties');
+      console.log('- forceScroll(pixels) - Force scroll position');
+    });
+  </script>
+</body>
+</html>

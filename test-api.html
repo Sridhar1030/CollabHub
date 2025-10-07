@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test getUsers API</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .container {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #444;
+    }
+    h1 {
+      margin-top: 0;
+      color: #60a5fa;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+    }
+    button {
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      margin: 5px;
+    }
+    button:hover {
+      background: linear-gradient(to right, #2563eb, #1d4ed8);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #1a1a1a;
+      border-radius: 6px;
+      border: 1px solid #444;
+      white-space: pre-wrap;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .success {
+      border-color: #22c55e;
+      background: #14532d;
+    }
+    .error {
+      border-color: #ef4444;
+      background: #7f1d1d;
+    }
+    .info {
+      background: #1e3a8a;
+      border-color: #3b82f6;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    pre {
+      margin: 0;
+    }
+    .step {
+      margin: 15px 0;
+      padding-left: 10px;
+      border-left: 3px solid #3b82f6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Test getUsers API Endpoint</h1>
+    
+    <div class="info">
+      <strong>📋 Instructions:</strong><br>
+      1. Enter your auth token (from localStorage)<br>
+      2. Click "Test API Call"<br>
+      3. Check the results below
+    </div>
+
+    <div class="step">
+      <label for="token"><strong>🔑 Authorization Token:</strong></label>
+      <input 
+        type="text" 
+        id="token" 
+        placeholder="Paste your JWT token here (or leave empty for no auth)"
+        value=""
+      />
+      <small style="color: #999;">Get from: localStorage.getItem('token')</small>
+    </div>
+
+    <div class="step">
+      <label for="url"><strong>🌐 API URL:</strong></label>
+      <input 
+        type="text" 
+        id="url" 
+        value="http://localhost:5000/getUsers"
+      />
+    </div>
+
+    <div class="buttons">
+      <button onclick="testAPI()">📡 Test API Call</button>
+      <button onclick="getTokenFromLS()">🔍 Get Token from localStorage</button>
+      <button onclick="setTestToken()">⚙️ Set Test Token</button>
+      <button onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+
+    <div id="result" class="result" style="display: none;"></div>
+  </div>
+
+  <script>
+    const resultDiv = document.getElementById('result');
+    const tokenInput = document.getElementById('token');
+    const urlInput = document.getElementById('url');
+
+    async function testAPI() {
+      const token = tokenInput.value.trim();
+      const url = urlInput.value.trim();
+
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'result';
+      resultDiv.innerHTML = `<div style="color: #fbbf24;">⏳ Testing API call...</div>\n`;
+
+      console.log('🔑 Token:', token || 'No token');
+      console.log('🌐 URL:', url);
+
+      const logs = [];
+      logs.push(`📤 REQUEST:`);
+      logs.push(`   Method: GET`);
+      logs.push(`   URL: ${url}`);
+      logs.push(`   Headers: { Authorization: "Bearer ${token || '(empty)'}" }`);
+      logs.push(`\n⏳ Sending request...\n`);
+
+      try {
+        const startTime = Date.now();
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const duration = Date.now() - startTime;
+        logs.push(`\n📥 RESPONSE:`);
+        logs.push(`   Status: ${response.status} ${response.statusText}`);
+        logs.push(`   Duration: ${duration}ms`);
+
+        const contentType = response.headers.get('content-type');
+        logs.push(`   Content-Type: ${contentType}`);
+
+        let data;
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          data = await response.text();
+        }
+
+        logs.push(`\n📊 RESPONSE DATA:`);
+        logs.push(JSON.stringify(data, null, 2));
+
+        if (response.ok) {
+          // Check if data has users
+          const users = data.users || data;
+          if (Array.isArray(users)) {
+            logs.push(`\n✅ SUCCESS!`);
+            logs.push(`   Found ${users.length} user(s)`);
+            
+            if (users.length > 0) {
+              logs.push(`\n👥 USERS:`);
+              users.forEach((user, index) => {
+                logs.push(`   ${index + 1}. ${user.name || 'No name'} (${user.email || 'No email'})`);
+              });
+            } else {
+              logs.push(`   ⚠️ Users array is empty`);
+            }
+          } else {
+            logs.push(`\n⚠️ WARNING: Response is not an array`);
+          }
+
+          resultDiv.className = 'result success';
+        } else {
+          logs.push(`\n❌ ERROR: ${response.status} ${response.statusText}`);
+          resultDiv.className = 'result error';
+        }
+
+        console.log('✅ API Test Complete:', data);
+      } catch (error) {
+        logs.push(`\n❌ ERROR:`);
+        logs.push(`   ${error.name}: ${error.message}`);
+        
+        if (error.message.includes('Failed to fetch')) {
+          logs.push(`\n💡 POSSIBLE CAUSES:`);
+          logs.push(`   • Backend server not running`);
+          logs.push(`   • CORS not configured`);
+          logs.push(`   • Wrong URL/port`);
+          logs.push(`\n💡 TRY:`);
+          logs.push(`   • Check if backend is running: http://localhost:5000`);
+          logs.push(`   • Enable CORS in backend: app.use(cors())`);
+        }
+
+        console.error('❌ API Test Failed:', error);
+        resultDiv.className = 'result error';
+      }
+
+      resultDiv.innerHTML = `<pre>${logs.join('\n')}</pre>`;
+    }
+
+    function getTokenFromLS() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        tokenInput.value = token;
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result success';
+        resultDiv.innerHTML = `<pre>✅ Token found in localStorage!\n\nToken: ${token.substring(0, 50)}...\n\n(Full token loaded into input field above)</pre>`;
+        console.log('Token from localStorage:', token);
+      } else {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = `<pre>❌ No token found in localStorage\n\n💡 Set a token with:\nlocalStorage.setItem('token', 'your_token_here')</pre>`;
+        console.log('No token in localStorage');
+      }
+    }
+
+    function setTestToken() {
+      const testToken = 'test_token_' + Date.now();
+      localStorage.setItem('token', testToken);
+      tokenInput.value = testToken;
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'result success';
+      resultDiv.innerHTML = `<pre>✅ Test token set!\n\nToken: ${testToken}\n\nThis is saved to localStorage and loaded into the input field.\n\n⚠️ This is just a test token - replace with your real JWT token!</pre>`;
+      console.log('Test token set:', testToken);
+    }
+
+    function clearResults() {
+      resultDiv.style.display = 'none';
+      resultDiv.innerHTML = '';
+      console.log('Results cleared');
+    }
+
+    // Auto-load token from localStorage on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        tokenInput.value = token;
+        console.log('Auto-loaded token from localStorage');
+      }
+    });
+
+    // Add keyboard shortcut
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        testAPI();
+      }
+    });
+  </script>
+</body>
+</html>
