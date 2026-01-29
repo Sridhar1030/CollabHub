@@ -33,6 +33,7 @@ jest.mock("../../models/Issue", () => ({
 
 // Import routes
 const mainRouter = require("../../routes/index");
+const { cacheService } = require("../../middleware/cache");
 
 // Create test app
 const app = express();
@@ -48,6 +49,8 @@ app.use((err, req, res, next) => {
 describe("Integration Tests", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        // Clear cache between tests to ensure mock data is used
+        cacheService.clear();
     });
 
     describe("Full API Flow Tests", () => {

@@ -1,0 +1,25 @@
+config:
+    target: "http://localhost:5000"
+    phases:
+        - duration: 30
+          arrivalRate: 10
+          name: "Quick load test"
+    defaults:
+        headers:
+            Content-Type: "application/json"
+            x-api-key: "valid-api-key-123"
+            x-username: "testuser"
+
+scenarios:
+    - name: "Basic API Test"
+      flow:
+          - get:
+                url: "/api/test"
+          - get:
+                url: "/api/repositories/testuser"
+          - get:
+                url: "/api/codebase/testuser/test-repo"
+          - get:
+                url: "/api/logs/testuser/test-repo"
+          - get:
+                url: "/api/issues/testuser/test-repo"

@@ -1,0 +1,57 @@
+config:
+    target: "http://localhost:5000"
+    phases:
+        - duration: 30
+          arrivalRate: 10
+          name: "Warm up"
+        - duration: 60
+          arrivalRate: 10
+          rampTo: 200
+          name: "Ramp to high load"
+        - duration: 60
+          arrivalRate: 200
+          rampTo: 500
+          name: "Extreme load"
+        - duration: 30
+          arrivalRate: 500
+          name: "Maximum stress"
+    defaults:
+        headers:
+            Content-Type: "application/json"
+            x-api-key: "valid-api-key-123"
+            x-username: "testuser"
+
+scenarios:
+    - name: "High Load - Repositories"
+      weight: 4
+      flow:
+          - get:
+                url: "/api/repositories/testuser"
+          - get:
+                url: "/api/repositories/developer1"
+
+    - name: "High Load - Codebase"
+      weight: 3
+      flow:
+          - get:
+                url: "/api/codebase/testuser/test-repo"
+          - get:
+                url: "/api/codebase/testuser/another-repo"
+
+    - name: "High Load - Issues"
+      weight: 2
+      flow:
+          - get:
+                url: "/api/issues/testuser/test-repo"
+          - get:
+                url: "/api/issues/testuser/test-repo?state=open"
+          - get:
+                url: "/api/issues/testuser/test-repo?state=closed"
+
+    - name: "High Load - Commits"
+      weight: 1
+      flow:
+          - get:
+                url: "/api/logs/testuser/test-repo"
+          - get:
+                url: "/api/commit-diff/testuser/test-repo/abc123"

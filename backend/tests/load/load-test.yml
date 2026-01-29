@@ -1,0 +1,58 @@
+config:
+    target: "http://localhost:5000"
+    phases:
+        - duration: 30
+          arrivalRate: 5
+          name: "Warm up"
+        - duration: 60
+          arrivalRate: 5
+          rampTo: 50
+          name: "Ramp up load"
+        - duration: 120
+          arrivalRate: 50
+          name: "Sustained load"
+        - duration: 30
+          arrivalRate: 100
+          name: "Spike test"
+    defaults:
+        headers:
+            Content-Type: "application/json"
+            x-api-key: "valid-api-key-123"
+            x-username: "testuser"
+
+scenarios:
+    - name: "Browse Repositories"
+      weight: 4
+      flow:
+          - get:
+                url: "/api/repositories/testuser"
+          - think: 1
+          - get:
+                url: "/api/codebase/testuser/test-repo"
+          - think: 1
+          - get:
+                url: "/api/logs/testuser/test-repo"
+
+    - name: "View Issues"
+      weight: 3
+      flow:
+          - get:
+                url: "/api/issues/testuser/test-repo"
+          - think: 2
+          - get:
+                url: "/api/issues/testuser/test-repo?state=open"
+
+    - name: "View Commits"
+      weight: 2
+      flow:
+          - get:
+                url: "/api/logs/testuser/test-repo"
+          - think: 1
+          - get:
+                url: "/api/commit-diff/testuser/test-repo/abc123"
+
+    - name: "API Health Check"
+      weight: 1
+      flow:
+          - get:
+                url: "/api/test"

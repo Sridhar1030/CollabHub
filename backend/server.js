@@ -104,10 +104,15 @@ if (process.env.NODE_ENV === "production" && cluster.isPrimary) {
     // 8. Add response time header for monitoring
     app.use((req, res, next) => {
         const start = Date.now();
-        res.on("finish", () => {
+        // Set header before response is sent, not after
+        const originalSend = res.send;
+        res.send = function (body) {
             const duration = Date.now() - start;
-            res.set("X-Response-Time", `${duration}ms`);
-        });
+            if (!res.headersSent) {
+                res.set("X-Response-Time", `${duration}ms`);
+            }
+            return originalSend.call(this, body);
+        };
         next();
     });
 
