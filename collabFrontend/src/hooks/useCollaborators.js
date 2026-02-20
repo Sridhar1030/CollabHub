@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export function useCollaborators() {
   const [collaborators, setCollaborators] = useState([]);
@@ -11,7 +11,7 @@ export function useCollaborators() {
 
     const fetchCollaborators = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/getUsers');
+        const response = await api.get('/getUsers');
         
         if (mounted) {
           // Ensure we have an array

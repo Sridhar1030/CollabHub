@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const getAuthors = async (req, res) => {
     try {
-        const response = await axios.get('http://13.233.145.46:3000/authors/sridhar/react-project');
+        const response = await axios.get('http://15.206.79.48:3000/authors/sridhar/react-project');
         
         // Get the authors array from response
         const authors = response.data;

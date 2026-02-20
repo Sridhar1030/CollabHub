@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import RepositorySidebar from "./RepositorySidebar";
 import EmptyState from "./EmptyState";
 import RepositoryHeader from "./RepositoryHeader";
 import LoadingState from "./LoadingState";
 import RepositoryTabs from "./RepositoryTabs";
 
-const API_BASE = "http://localhost:5000"; // Or your deployed IP
+const API_BASE = ""; // base URL is handled by api.js (VITE_API_URL)
 
 export default function Log() {
   const [repos, setRepos] = useState([]);
@@ -19,8 +19,8 @@ export default function Log() {
   const apiKey = "abc123";
 
   useEffect(() => {
-    axios
-      .get(`${API_BASE}/repositories/${username}`, {
+    api
+      .get(`/repositories/${username}`, {
         headers: { "x-api-key": apiKey },
       })
       .then((res) => setRepos(res.data))
@@ -31,12 +31,12 @@ export default function Log() {
     setSelectedRepo(repo);
     setLoading(true);
     try {
-      const logRes = await axios.get(`${API_BASE}/log/${username}/${repo}`, {
+      const logRes = await api.get(`/log/${username}/${repo}`, {
         headers: { "x-api-key": apiKey },
       });
       setLogs(logRes.data);
 
-      const codeRes = await axios.get(`${API_BASE}/codebase/${username}/${repo}`, {
+      const codeRes = await api.get(`/codebase/${username}/${repo}`, {
         headers: { "x-api-key": apiKey },
       });
       setFiles(codeRes.data);

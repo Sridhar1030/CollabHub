@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import axios from 'axios'
+import api from '../api'
 
-const API_BASE = "http://localhost:5000"
+const API_BASE = "" // base URL is handled by api.js (VITE_API_URL)
 
 export default function CommitLog({ logs, selectedRepo }) {
   console.log('logs', logs)
@@ -69,7 +69,7 @@ export default function CommitLog({ logs, selectedRepo }) {
     setLoadingDiffs(prev => new Set([...prev, commitHash]))
     
     try {
-      const response = await axios.get(`${API_BASE}/commit-diff/${username}/${selectedRepo}/${commitHash}`, {
+      const response = await api.get(`/commit-diff/${username}/${selectedRepo}/${commitHash}`, {
         headers: { "x-api-key": apiKey }
       })
       

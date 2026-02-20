@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export default function RepositoryHeader({ selectedRepo }) {
   const [collaborators, setCollaborators] = useState([]);
@@ -11,7 +11,7 @@ export default function RepositoryHeader({ selectedRepo }) {
   useEffect(() => {
     const fetchCollaborators = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/getUsers');
+        const response = await api.get('/getUsers');
         console.log('API Response:', response.data);
         setCollaborators(Array.isArray(response.data) ? response.data : []);
         setError(null);

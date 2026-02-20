@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 export default function Issues({ username, repo, collaborators = [] }) {
   const [issues, setIssues] = useState([]);
@@ -19,7 +19,7 @@ export default function Issues({ username, repo, collaborators = [] }) {
     try {
       setLoading(true);
       const params = filter !== 'all' ? { status: filter } : {};
-      const response = await axios.get(`http://localhost:5000/issues/${username}/${repo}`, { params });
+      const response = await api.get(`/issues/${username}/${repo}`, { params });
       setIssues(response.data.issues || []);
     } catch (error) {
       console.error('Error fetching issues:', error);
@@ -30,7 +30,7 @@ export default function Issues({ username, repo, collaborators = [] }) {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/issues/${username}/${repo}/stats`);
+      const response = await api.get(`/issues/${username}/${repo}/stats`);
       setStats(response.data.stats);
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -380,10 +380,10 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
         setLoadingUsers(true);
         const token = localStorage.getItem('token') || ''; // Get token from localStorage
         console.log('🔑 Fetching users with token:', token ? 'Token exists' : 'No token found');
-        console.log('📡 API Call: GET http://localhost:5000/getUsers');
+        console.log('📡 API Call: GET /getUsers');
         console.log('📤 Headers:', { Authorization: `Bearer ${token}` });
         
-        const response = await axios.get('http://localhost:5000/getUsers', {
+        const response = await api.get('/getUsers', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -437,7 +437,7 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
     setSubmitting(true);
 
     try {
-      await axios.post(`http://localhost:5000/issues/${username}/${repo}`, formData);
+      await api.post(`/issues/${username}/${repo}`, formData);
       onSuccess();
     } catch (error) {
       console.error('Error creating issue:', error);
@@ -692,7 +692,7 @@ function IssueDetailModal({ issue, onClose, onUpdate }) {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/issues/issue/${issue._id}`, { status: newStatus });
+      await api.put(`/issues/issue/${issue._id}`, { status: newStatus });
       setStatus(newStatus);
       onUpdate();
     } catch (error) {
@@ -704,7 +704,7 @@ function IssueDetailModal({ issue, onClose, onUpdate }) {
     if (!comment.trim()) return;
 
     try {
-      await axios.post(`http://localhost:5000/issues/issue/${issue._id}/comment`, {
+      await api.post(`/issues/issue/${issue._id}/comment`, {
         author: { name: 'Current User', email: 'user@example.com' },
         text: comment
       });

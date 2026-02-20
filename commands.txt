@@ -1,0 +1,235 @@
+================================================================================
+  COLLABHUB — COMMAND REFERENCE
+  Project: /Users/srpillai/CollabHub
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+  AFTER A PC RESTART — run these in order
+────────────────────────────────────────────────────────────────────────────────
+
+  1. Start minikube
+     minikube start --driver=docker
+
+  2. Make sure kubectl is pointing at minikube
+     kubectl config use-context minikube
+
+  3. Verify all pods are running (should show 6 pods)
+     kubectl get pods
+
+  4. Forward the backend service to localhost:5000
+     kubectl port-forward svc/collabhub-backend 5000:5000 &
+
+  5. Forward Grafana to localhost:3000  (optional — for monitoring dashboard)
+     kubectl port-forward svc/grafana 3000:3000 &
+
+  6. Forward Prometheus to localhost:9090  (optional — for raw metrics)
+     kubectl port-forward svc/prometheus 9090:9090 &
+
+  7. Start the frontend dev server
+     cd /Users/srpillai/CollabHub/collabFrontend
+     npm run dev
+
+  8. Open the app
+     http://localhost:5173   (or 5174 if 5173 is taken)
+
+  9. Open Grafana  (admin / admin)
+     http://localhost:3000
+
+--------------------------------------------------------------------------------
+  QUICK ONE-LINER (steps 1-6 combined, paste into terminal)
+--------------------------------------------------------------------------------
+
+  minikube start --driver=docker && \
+  kubectl config use-context minikube && \
+  kubectl port-forward svc/collabhub-backend 5000:5000 & \
+  kubectl port-forward svc/grafana 3000:3000 & \
+  kubectl port-forward svc/prometheus 9090:9090 &
+
+
+================================================================================
+  FULL SESSION COMMANDS (everything done during setup)
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+  DOCKER / MINIKUBE SETUP
+────────────────────────────────────────────────────────────────────────────────
+
+  # Start minikube
+  minikube start --driver=docker
+
+  # Enable required addons
+  minikube addons enable metrics-server
+  minikube addons enable ingress
+  minikube addons enable ingress-dns
+
+  # Switch kubectl context (also added to ~/.zshrc so it persists)
+  kubectl config use-context minikube
+
+  # Build the backend Docker image inside minikube
+  minikube image build -t collabhub-backend:latest backend/
+
+  # Rebuild after code changes + rolling restart
+  minikube image build -t collabhub-backend:latest backend/ && \
+  kubectl rollout restart deployment/collabhub-backend
+
+────────────────────────────────────────────────────────────────────────────────
+  KUBERNETES — APPLY MANIFESTS
+────────────────────────────────────────────────────────────────────────────────
+
+  cd /Users/srpillai/CollabHub/backend/k8s
+
+  kubectl apply -f mongo-pvc.yaml
+  kubectl apply -f mongo-deployment.yaml
+  kubectl apply -f backend-deployment.yaml
+  kubectl apply -f backend-hpa.yaml
+  kubectl apply -f backend-ingress.yaml
+  kubectl apply -f prometheus-config.yaml
+  kubectl apply -f prometheus-deployment.yaml
+  kubectl apply -f grafana-deployment.yaml
+
+  # Apply all at once
+  kubectl apply -f .
+
+────────────────────────────────────────────────────────────────────────────────
+  KUBERNETES — STATUS CHECKS
+────────────────────────────────────────────────────────────────────────────────
+
+  # All pods
+  kubectl get pods
+
+  # Watch pods live
+  kubectl get pods -w
+
+  # All services
+  kubectl get svc
+
+  # HPA status
+  kubectl get hpa
+
+  # Describe a pod (replace <pod-name>)
+  kubectl describe pod <pod-name>
+
+  # Logs from a backend pod
+  kubectl logs -l app=collabhub-backend --tail=50
+
+  # Logs from all pods live
+  kubectl logs -l app=collabhub-backend -f
+
+  # Which pod is handling requests
+  curl http://localhost:5000/pod-info
+
+────────────────────────────────────────────────────────────────────────────────
+  KUBERNETES — DEPLOYMENTS
+────────────────────────────────────────────────────────────────────────────────
+
+  # Rolling restart (picks up new image)
+  kubectl rollout restart deployment/collabhub-backend
+
+  # Watch rollout progress
+  kubectl rollout status deployment/collabhub-backend
+
+  # Scale pods manually
+  kubectl scale deployment/collabhub-backend --replicas=3
+
+  # Delete a pod (k8s will auto-recreate it — tests resilience)
+  kubectl delete pod <pod-name>
+
+────────────────────────────────────────────────────────────────────────────────
+  PORT FORWARDING
+────────────────────────────────────────────────────────────────────────────────
+
+  # Backend  →  localhost:5000
+  kubectl port-forward svc/collabhub-backend 5000:5000
+
+  # Grafana  →  localhost:3000
+  kubectl port-forward svc/grafana 3000:3000
+
+  # Prometheus  →  localhost:9090
+  kubectl port-forward svc/prometheus 9090:9090
+
+  # Kill all port-forwards
+  pkill -f "kubectl port-forward"
+
+  # Auto-restart port-forward if it crashes (resilient version)
+  # Use this instead of a plain port-forward for long sessions
+  while true; do
+    kubectl port-forward svc/collabhub-backend 5000:5000
+    echo "port-forward died, restarting in 2s..."
+    sleep 2
+  done &
+
+────────────────────────────────────────────────────────────────────────────────
+  MONITORING
+────────────────────────────────────────────────────────────────────────────────
+
+  # Grafana dashboard  (login: admin / admin)
+  http://localhost:3000
+
+  # Prometheus query UI
+  http://localhost:9090
+
+  # Check Grafana health
+  curl http://localhost:3000/api/health
+
+  # Run auto-kill watchdog (dry run — won't actually kill)
+  DRY_RUN=true PROMETHEUS_URL=http://localhost:9090 \
+  bash /Users/srpillai/CollabHub/backend/k8s/auto-kill-pods.sh
+
+  # Run auto-kill watchdog (live)
+  PROMETHEUS_URL=http://localhost:9090 \
+  bash /Users/srpillai/CollabHub/backend/k8s/auto-kill-pods.sh
+
+────────────────────────────────────────────────────────────────────────────────
+  FRONTEND
+────────────────────────────────────────────────────────────────────────────────
+
+  cd /Users/srpillai/CollabHub/collabFrontend
+
+  # Install deps (first time only)
+  npm install
+
+  # Start dev server
+  npm run dev
+
+  # Build for production
+  npm run build
+
+────────────────────────────────────────────────────────────────────────────────
+  MINIKUBE — MISC
+────────────────────────────────────────────────────────────────────────────────
+
+  # Stop minikube (safe — all state preserved)
+  minikube stop
+
+  # Resume after stop
+  minikube start
+
+  # Full reset (destroys everything)
+  minikube delete
+
+  # Get minikube IP
+  minikube ip
+
+  # SSH into minikube node
+  minikube ssh
+
+  # Open minikube dashboard in browser
+  minikube dashboard
+
+  # List all addons and their status
+  minikube addons list
+
+================================================================================
+  FILE LOCATIONS
+================================================================================
+
+  Dockerfile              backend/Dockerfile
+  k8s manifests           backend/k8s/
+  auto-kill script        backend/k8s/auto-kill-pods.sh
+  frontend env            collabFrontend/.env.local         (VITE_API_URL)
+  api instance            collabFrontend/src/api.js
+  pod badge component     collabFrontend/src/components/PodIndicator.jsx
+  architecture diagram    Images/port-forward-architecture.svg
+  mermaid diagram         Images/port-forward-architecture.md
+
+================================================================================

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 // Get file extension for icon styling
 const getFileIcon = (filename) => {
@@ -168,7 +168,7 @@ export default function CodebaseViewer({ username, repo }) {
         setError(null);
         console.log("username", username)
         console.log("repo", repo)
-        const response = await axios.get(`http://localhost:5000/codebase/${username}/${repo}`);
+        const response = await api.get(`/codebase/${username}/${repo}`);
         
         // Add this line to see the actual response data
         console.log("API response data:", response.data);
@@ -193,7 +193,7 @@ export default function CodebaseViewer({ username, repo }) {
     try {
       setLoadingContent(true);
       setError(null);
-      const response = await axios.get(`http://localhost:5000/codebase/file/${username}/${repo}/${filepath}`);
+      const response = await api.get(`/codebase/file/${username}/${repo}/${filepath}`);
       setSelectedFile(filepath);
       setFileContent(response.data);
     } catch (err) {

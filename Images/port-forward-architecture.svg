@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 540" width="860" height="540" font-family="'Segoe UI', system-ui, sans-serif">
+
+  <!-- Background -->
+  <rect width="860" height="540" rx="16" fill="#0f172a"/>
+
+  <!-- Title -->
+  <text x="430" y="38" text-anchor="middle" font-size="18" font-weight="700" fill="#f1f5f9">kubectl port-forward — How localhost:5000 hits the pods</text>
+
+  <!-- ═══════════════════ MAC ZONE ═══════════════════ -->
+  <rect x="30" y="60" width="220" height="160" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <text x="140" y="82" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="1">YOUR MAC</text>
+
+  <!-- Browser box -->
+  <rect x="55" y="92" width="170" height="52" rx="8" fill="#0ea5e9" fill-opacity="0.15" stroke="#0ea5e9" stroke-width="1.5"/>
+  <text x="140" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="#7dd3fc">🌐 Browser / Frontend</text>
+  <text x="140" y="132" text-anchor="middle" font-size="11" fill="#38bdf8">http://localhost:5000</text>
+
+  <!-- port-forward box -->
+  <rect x="55" y="158" width="170" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="140" y="178" text-anchor="middle" font-size="12" font-weight="600" fill="#c4b5fd">kubectl port-forward</text>
+  <text x="140" y="196" text-anchor="middle" font-size="10" fill="#a78bfa">local proxy on port 5000</text>
+
+  <!-- Arrow: browser → port-forward -->
+  <line x1="140" y1="144" x2="140" y2="158" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="140,158 136,150 144,150" fill="#64748b"/>
+
+  <!-- ═══════════════════ TUNNEL ARROW ═══════════════════ -->
+  <!-- Tunnel line -->
+  <line x1="225" y1="182" x2="350" y2="182" stroke="#8b5cf6" stroke-width="2.5"/>
+  <polygon points="350,182 340,177 340,187" fill="#8b5cf6"/>
+  <!-- Tunnel label -->
+  <rect x="232" y="156" width="112" height="20" rx="4" fill="#1e1b4b"/>
+  <text x="288" y="170" text-anchor="middle" font-size="9.5" fill="#a78bfa">TLS tunnel via k8s API</text>
+
+  <!-- ═══════════════════ MINIKUBE ZONE ═══════════════════ -->
+  <rect x="350" y="60" width="470" height="420" rx="14" fill="#172033" stroke="#1e3a5f" stroke-width="2"/>
+  <text x="585" y="82" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b" letter-spacing="1">MINIKUBE CLUSTER  (inside Docker)</text>
+
+  <!-- k8s Service box -->
+  <rect x="390" y="95" width="200" height="72" rx="10" fill="#0f3460" stroke="#2563eb" stroke-width="2"/>
+  <text x="490" y="118" text-anchor="middle" font-size="13" font-weight="700" fill="#93c5fd">⚖️  k8s Service</text>
+  <text x="490" y="136" text-anchor="middle" font-size="11" fill="#60a5fa">collabhub-backend</text>
+  <text x="490" y="153" text-anchor="middle" font-size="10" fill="#3b82f6">ClusterIP · port 5000</text>
+
+  <!-- Arrow from tunnel into service -->
+  <line x1="350" y1="182" x2="390" y2="131" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="390,131 382,136 386,126" fill="#8b5cf6"/>
+
+  <!-- Load-balance arrows from service to pods -->
+  <!-- to pod1 -->
+  <line x1="490" y1="167" x2="420" y2="250" stroke="#2563eb" stroke-width="1.8"/>
+  <polygon points="420,250 416,240 426,243" fill="#2563eb"/>
+  <!-- to pod2 -->
+  <line x1="490" y1="167" x2="490" y2="250" stroke="#2563eb" stroke-width="1.8"/>
+  <polygon points="490,250 486,240 494,240" fill="#2563eb"/>
+  <!-- to pod3 -->
+  <line x1="490" y1="167" x2="560" y2="250" stroke="#2563eb" stroke-width="1.8"/>
+  <polygon points="560,250 554,243 563,240" fill="#2563eb"/>
+
+  <!-- "round-robin" label -->
+  <text x="490" y="232" text-anchor="middle" font-size="9.5" fill="#475569">round-robin load balance</text>
+
+  <!-- POD 1 -->
+  <rect x="360" y="260" width="120" height="70" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="420" y="282" text-anchor="middle" font-size="22">🟢</text>
+  <text x="420" y="304" text-anchor="middle" font-size="11" font-weight="600" fill="#86efac">Pod 1</text>
+  <text x="420" y="320" text-anchor="middle" font-size="9" fill="#4ade80">…-rx47w</text>
+
+  <!-- POD 2 -->
+  <rect x="430" y="260" width="120" height="70" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="490" y="282" text-anchor="middle" font-size="22">🟢</text>
+  <text x="490" y="304" text-anchor="middle" font-size="11" font-weight="600" fill="#86efac">Pod 2</text>
+  <text x="490" y="320" text-anchor="middle" font-size="9" fill="#4ade80">…-d6htq</text>
+
+  <!-- POD 3 -->
+  <rect x="500" y="260" width="120" height="70" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="560" y="282" text-anchor="middle" font-size="22">🟢</text>
+  <text x="560" y="304" text-anchor="middle" font-size="11" font-weight="600" fill="#86efac">Pod 3</text>
+  <text x="560" y="320" text-anchor="middle" font-size="9" fill="#4ade80">…-26bgq</text>
+
+  <!-- Pod → MongoDB arrow -->
+  <line x1="490" y1="330" x2="490" y2="368" stroke="#475569" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="490,368 486,360 494,360" fill="#475569"/>
+
+  <!-- MongoDB box -->
+  <rect x="390" y="368" width="200" height="60" rx="10" fill="#1c1917" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="490" y="392" text-anchor="middle" font-size="13" font-weight="600" fill="#fcd34d">🍃 MongoDB</text>
+  <text x="490" y="410" text-anchor="middle" font-size="10" fill="#d97706">mongo:27017 (PVC)</text>
+
+  <!-- ═══════════════════ Response header callout ═══════════════════ -->
+  <rect x="650" y="255" width="155" height="80" rx="10" fill="#1e1b4b" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="727" y="276" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">Response header</text>
+  <text x="727" y="295" text-anchor="middle" font-size="10" fill="#a78bfa">X-Pod-Name:</text>
+  <text x="727" y="311" text-anchor="middle" font-size="10" fill="#7c3aed">collabhub-backend-</text>
+  <text x="727" y="326" text-anchor="middle" font-size="10" fill="#7c3aed">7575bfcf9f-rx47w</text>
+
+  <!-- Dashed line from pod to callout -->
+  <line x1="620" y1="295" x2="650" y2="295" stroke="#6d28d9" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+  <!-- ═══════════════════ PodIndicator callout ═══════════════════ -->
+  <rect x="30" y="290" width="220" height="90" rx="10" fill="#1e1b4b" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="140" y="312" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">PodIndicator badge</text>
+  <text x="140" y="330" text-anchor="middle" font-size="10" fill="#a78bfa">(bottom-right of the UI)</text>
+  <rect x="60" y="342" width="160" height="28" rx="14" fill="#8b5cf6"/>
+  <text x="85" y="361" text-anchor="start" font-size="11" font-weight="600" fill="white">● pod: 7575-rx47w</text>
+
+  <!-- Arrow: response header → PodIndicator -->
+  <line x1="225" y1="295" x2="250" y2="295" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="238" y="292" text-anchor="middle" font-size="8" fill="#7c3aed">reads</text>
+  <!-- left arrow to pod indicator box -->
+  <line x1="225" y1="357" x2="250" y2="295" stroke="#7c3aed" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <polygon points="225,357 230,348 235,356" fill="#7c3aed"/>
+
+  <!-- ═══════════════════ Legend ═══════════════════ -->
+  <rect x="30" y="420" width="780" height="100" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="420" y="442" text-anchor="middle" font-size="11" font-weight="700" fill="#94a3b8" letter-spacing="0.5">HOW IT WORKS</text>
+
+  <circle cx="60" cy="462" r="5" fill="#8b5cf6"/>
+  <text x="72" y="466" font-size="10" fill="#cbd5e1">① Browser calls localhost:5000</text>
+
+  <circle cx="60" cy="482" r="5" fill="#8b5cf6"/>
+  <text x="72" y="486" font-size="10" fill="#cbd5e1">② kubectl port-forward tunnels it through the k8s API into the cluster</text>
+
+  <circle cx="60" cy="502" r="5" fill="#2563eb"/>
+  <text x="72" y="506" font-size="10" fill="#cbd5e1">③ k8s Service load-balances across the 3 pods (round-robin)</text>
+
+  <circle cx="440" cy="462" r="5" fill="#22c55e"/>
+  <text x="452" y="466" font-size="10" fill="#cbd5e1">④ Pod handles request, responds with X-Pod-Name header</text>
+
+  <circle cx="440" cy="482" r="5" fill="#a78bfa"/>
+  <text x="452" y="486" font-size="10" fill="#cbd5e1">⑤ api.js interceptor reads the header, fires a DOM event</text>
+
+  <circle cx="440" cy="502" r="5" fill="#a78bfa"/>
+  <text x="452" y="506" font-size="10" fill="#cbd5e1">⑥ PodIndicator badge shows which pod served the request</text>
+
+</svg>

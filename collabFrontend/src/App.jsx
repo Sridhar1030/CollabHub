@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Layout from './components/Layout'
 import Log from './components/Log'
+import PodIndicator from './components/PodIndicator'
 import './App.css'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
               <Route path="/" element={<Log />} />
             </Routes>
           </Layout>
+          <PodIndicator />
         </div>
       </div>
     </Router>

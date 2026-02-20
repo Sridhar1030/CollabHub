@@ -86,6 +86,7 @@ if (process.env.NODE_ENV === "production" && cluster.isPrimary) {
             origin: process.env.CORS_ORIGIN || "*",
             methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
             allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+            exposedHeaders: ["X-Pod-Name", "X-Response-Time"], // Expose to browser JS
             maxAge: 86400, // Cache preflight for 24 hours
         }),
     );
@@ -99,6 +100,24 @@ if (process.env.NODE_ENV === "production" && cluster.isPrimary) {
         req.setTimeout(30000); // 30 second timeout
         res.setTimeout(30000);
         next();
+    });
+
+    // 8a. Inject pod identity header (k8s Downward API sets POD_NAME)
+    const POD_NAME = process.env.POD_NAME || `local-${process.pid}`;
+    app.use((req, res, next) => {
+        res.set("X-Pod-Name", POD_NAME);
+        next();
+    });
+
+    // 8b. Pod info endpoint – lets clients explicitly check which pod they hit
+    app.get("/pod-info", (req, res) => {
+        res.json({
+            pod: POD_NAME,
+            namespace: process.env.POD_NAMESPACE || "local",
+            node: process.env.NODE_NAME || "local",
+            pid: process.pid,
+            uptime: Math.round(process.uptime()),
+        });
     });
 
     // 8. Add response time header for monitoring
