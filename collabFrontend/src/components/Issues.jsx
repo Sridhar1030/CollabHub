@@ -7,10 +7,9 @@ export default function Issues({ username, repo, collaborators = [] }) {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
-  const [filter, setFilter] = useState('all'); // all, open, in-progress, closed
+  const [filter, setFilter] = useState('all');
   const [stats, setStats] = useState(null);
 
-  // Fetch issues
   useEffect(() => {
     fetchIssues();
     fetchStats();
@@ -38,314 +37,165 @@ export default function Issues({ username, repo, collaborators = [] }) {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusLabel = (status) => {
     switch (status) {
-      case 'open': return 'text-green-400 bg-green-400/10 border-green-400/30';
-      case 'in-progress': return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30';
-      case 'closed': return 'text-gray-400 bg-gray-400/10 border-gray-400/30';
-      default: return 'text-gray-400 bg-gray-400/10 border-gray-400/30';
+      case 'open': return { text: 'Open', color: '#008000', bg: '#ccffcc' };
+      case 'in-progress': return { text: 'In Progress', color: '#806000', bg: '#ffffcc' };
+      case 'closed': return { text: 'Closed', color: '#808080', bg: '#e8e4dc' };
+      default: return { text: status, color: '#808080', bg: '#e8e4dc' };
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityLabel = (priority) => {
     switch (priority) {
-      case 'critical': return 'text-red-500 bg-red-500/10';
-      case 'high': return 'text-orange-500 bg-orange-500/10';
-      case 'medium': return 'text-yellow-500 bg-yellow-500/10';
-      case 'low': return 'text-blue-500 bg-blue-500/10';
-      default: return 'text-gray-500 bg-gray-500/10';
-    }
-  };
-
-  const getPriorityIcon = (priority) => {
-    switch (priority) {
-      case 'critical': return '🔴';
-      case 'high': return '🟠';
-      case 'medium': return '🟡';
-      case 'low': return '🔵';
-      default: return '⚪';
+      case 'critical': return { icon: '🔴', label: 'Critical' };
+      case 'high': return { icon: '🟠', label: 'High' };
+      case 'medium': return { icon: '🟡', label: 'Medium' };
+      case 'low': return { icon: '🔵', label: 'Low' };
+      default: return { icon: '⚪', label: 'Unknown' };
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="relative inline-block mb-4">
-            <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full animate-pulse"></div>
-            <div className="relative animate-spin w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full"></div>
-          </div>
-          <p className="text-gray-200 font-semibold">Loading issues...</p>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px', fontSize: '11px', color: '#808080' }}>
+        ⌛ Loading issues...
       </div>
     );
   }
 
   return (
-    <div className="space-y-5">
-      {/* Header with Stats */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full"></div>
-            <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-xl">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white">Issues</h2>
-            <p className="text-xs sm:text-sm text-gray-400">Track and manage repository issues</p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-blue-500/50 transition-all hover:scale-105 flex items-center justify-center gap-2"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+    <div style={{ fontFamily: 'Tahoma, sans-serif' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', paddingBottom: '6px', borderBottom: '1px solid #808080' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="#000080">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
-          New Issue
+          <span style={{ fontSize: '12px', fontWeight: 'bold' }}>Issues</span>
+          <span style={{ fontSize: '11px', color: '#808080' }}>— Track and manage repository issues</span>
+        </div>
+        <button
+          className="win-btn"
+          onClick={() => setShowCreateModal(true)}
+          style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}
+        >
+          ➕ New Issue
         </button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats */}
       {stats && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div className="glass-dark rounded-xl p-4 border border-white/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-400 mb-1">Open</p>
-                <p className="text-2xl font-bold text-green-400">
-                  {stats.byStatus.find(s => s._id === 'open')?.count || 0}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+        <div style={{ display: 'flex', gap: '4px', marginBottom: '8px', flexWrap: 'wrap' }}>
+          {[
+            { label: 'Open', count: stats.byStatus.find(s => s._id === 'open')?.count || 0, color: '#008000', bg: '#ccffcc' },
+            { label: 'In Progress', count: stats.byStatus.find(s => s._id === 'in-progress')?.count || 0, color: '#806000', bg: '#ffffcc' },
+            { label: 'Closed', count: stats.byStatus.find(s => s._id === 'closed')?.count || 0, color: '#808080', bg: '#e8e4dc' },
+            { label: 'Total', count: issues.length, color: '#000080', bg: '#cce0ff' },
+          ].map(stat => (
+            <div
+              key={stat.label}
+              className="win-raised"
+              style={{ padding: '4px 10px', background: stat.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '70px' }}
+            >
+              <span style={{ fontSize: '16px', fontWeight: 'bold', color: stat.color }}>{stat.count}</span>
+              <span style={{ fontSize: '10px', color: stat.color }}>{stat.label}</span>
             </div>
-          </div>
-
-          <div className="glass-dark rounded-xl p-4 border border-white/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-400 mb-1">In Progress</p>
-                <p className="text-2xl font-bold text-yellow-400">
-                  {stats.byStatus.find(s => s._id === 'in-progress')?.count || 0}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-dark rounded-xl p-4 border border-white/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-400 mb-1">Closed</p>
-                <p className="text-2xl font-bold text-gray-400">
-                  {stats.byStatus.find(s => s._id === 'closed')?.count || 0}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-gray-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-dark rounded-xl p-4 border border-white/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-400 mb-1">Total</p>
-                <p className="text-2xl font-bold text-blue-400">{issues.length}</p>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       )}
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 glass-dark rounded-xl p-1.5 sm:p-2 border border-white/10 w-full sm:w-fit overflow-x-auto">
-        {['all', 'open', 'in-progress', 'closed'].map((status) => (
+      {/* Filter buttons */}
+      <div style={{ display: 'flex', gap: '2px', marginBottom: '8px' }}>
+        {['all', 'open', 'in-progress', 'closed'].map(status => (
           <button
             key={status}
+            className={`win-tab${filter === status ? ' active' : ''}`}
             onClick={() => setFilter(status)}
-            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
-              filter === status
-                ? 'bg-blue-500 text-white shadow-lg'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
+            style={{ fontFamily: 'Tahoma, sans-serif', cursor: 'pointer' }}
           >
             {status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ')}
           </button>
         ))}
       </div>
 
-      {/* Issues List */}
-      <div className="space-y-3">
+      {/* Issues list */}
+      <div className="win-sunken" style={{ background: '#ffffff', maxHeight: '400px', overflowY: 'auto' }}>
         {issues.length === 0 ? (
-          <div className="glass-dark rounded-xl p-12 text-center border border-white/10">
-            <div className="relative inline-block mb-4">
-              <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full"></div>
-              <div className="relative w-16 h-16 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-2xl flex items-center justify-center border border-blue-500/30">
-                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+          <div style={{ padding: '32px', textAlign: 'center', fontSize: '11px', color: '#808080' }}>
+            <div style={{ fontSize: '24px', marginBottom: '8px' }}>📭</div>
+            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>No issues found</div>
+            <div>
+              {filter === 'all'
+                ? 'Create your first issue to start tracking work.'
+                : `No ${filter.replace('-', ' ')} issues at the moment.`}
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">No issues found</h3>
-            <p className="text-gray-400 mb-6">
-              {filter === 'all' 
-                ? 'Create your first issue to start tracking work' 
-                : `No ${filter.replace('-', ' ')} issues at the moment`}
-            </p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="btn-primary inline-flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Create First Issue
-            </button>
           </div>
         ) : (
-          issues.map((issue) => (
-            <div
-              key={issue._id}
-              onClick={() => setSelectedIssue(issue)}
-              className="glass-dark rounded-xl p-5 border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer group"
-            >
-              <div className="flex items-start gap-4">
-                {/* Priority Icon */}
-                <div className={`w-10 h-10 rounded-lg ${getPriorityColor(issue.priority)} flex items-center justify-center text-xl flex-shrink-0`}>
-                  {getPriorityIcon(issue.priority)}
-                </div>
+          issues.map((issue, index) => {
+            const statusInfo = getStatusLabel(issue.status);
+            const priorityInfo = getPriorityLabel(issue.priority);
+            return (
+              <div
+                key={issue._id}
+                className="win-list-item"
+                onClick={() => setSelectedIssue(issue)}
+                style={{ 
+                  padding: '4px 6px', borderBottom: '1px solid #e8e4dc',
+                  display: 'flex', alignItems: 'flex-start', gap: '8px',
+                  cursor: 'pointer', fontSize: '11px',
+                }}
+              >
+                {/* Priority icon */}
+                <span style={{ fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>{priorityInfo.icon}</span>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                    <span style={{ fontWeight: 'bold', color: '#000080', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {issue.title}
-                    </h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(issue.status)} whitespace-nowrap`}>
-                      {issue.status.replace('-', ' ')}
+                    </span>
+                    {/* Status badge */}
+                    <span style={{ 
+                      fontSize: '10px', padding: '1px 5px', flexShrink: 0,
+                      background: statusInfo.bg, color: statusInfo.color,
+                      border: `1px solid ${statusInfo.color}`,
+                    }}>
+                      {statusInfo.text}
                     </span>
                   </div>
-
-                  <p className="text-sm text-gray-400 mb-3 line-clamp-2">
+                  <div style={{ color: '#444444', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {issue.description}
-                  </p>
-
-                  <div className="flex items-center flex-wrap gap-4 text-xs text-gray-400">
-                    <div className="flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      {issue.createdBy.name}
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {new Date(issue.createdAt).toLocaleDateString()}
-                    </div>
-
-                    {issue.assignees.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <div className="flex -space-x-2">
-                          {issue.assignees.slice(0, 3).map((assignee, idx) => (
-                            <div
-                              key={idx}
-                              className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-gray-900 flex items-center justify-center text-white text-[10px] font-semibold"
-                              title={assignee.name || assignee.email || 'Unknown'}
-                            >
-                              {assignee.name ? assignee.name.charAt(0).toUpperCase() : assignee.email ? assignee.email.charAt(0).toUpperCase() : '?'}
-                            </div>
-                          ))}
-                          {issue.assignees.length > 3 && (
-                            <div className="w-6 h-6 rounded-full bg-gray-700 border-2 border-gray-900 flex items-center justify-center text-white text-[10px]">
-                              +{issue.assignees.length - 3}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {issue.comments.length > 0 && (
-                      <div className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        {issue.comments.length}
-                      </div>
-                    )}
                   </div>
-
-                  {/* Labels */}
-                  {issue.labels && issue.labels.length > 0 && (
-                    <div className="flex items-center gap-2 mt-3">
-                      {issue.labels.map((label, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-1 rounded-md text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                        >
-                          {label}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <div style={{ color: '#808080', marginTop: '2px', display: 'flex', gap: '10px' }}>
+                    <span>👤 {issue.createdBy.name}</span>
+                    <span>📅 {new Date(issue.createdAt).toLocaleDateString()}</span>
+                    {issue.comments.length > 0 && <span>💬 {issue.comments.length}</span>}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
-      {/* Create Issue Modal — portal to body to escape overflow-hidden ancestors */}
+      {/* Modals */}
       {showCreateModal && createPortal(
         <CreateIssueModal
           username={username}
           repo={repo}
           collaborators={collaborators}
           onClose={() => setShowCreateModal(false)}
-          onSuccess={() => {
-            fetchIssues();
-            fetchStats();
-            setShowCreateModal(false);
-          }}
+          onSuccess={() => { fetchIssues(); fetchStats(); setShowCreateModal(false); }}
         />,
         document.body
       )}
 
-      {/* Issue Detail Modal — portal to body */}
       {selectedIssue && createPortal(
         <IssueDetailModal
           issue={selectedIssue}
           onClose={() => setSelectedIssue(null)}
-          onUpdate={() => {
-            fetchIssues();
-            fetchStats();
-            setSelectedIssue(null);
-          }}
+          onUpdate={() => { fetchIssues(); fetchStats(); setSelectedIssue(null); }}
         />,
         document.body
       )}
@@ -353,80 +203,37 @@ export default function Issues({ username, repo, collaborators = [] }) {
   );
 }
 
-// Create Issue Modal Component
 function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'medium',
-    assignees: [],
-    labels: [],
-    createdBy: { name: 'Current User', email: 'user@example.com' } // Replace with actual user
+    title: '', description: '', priority: 'medium', assignees: [], labels: [],
+    createdBy: { name: 'Current User', email: 'user@example.com' }
   });
   const [labelInput, setLabelInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
 
-  // Lock body scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    return () => { document.body.style.overflow = 'unset'; };
   }, []);
 
-  // Fetch users from the API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoadingUsers(true);
-        const token = localStorage.getItem('token') || ''; // Get token from localStorage
-        console.log('🔑 Fetching users with token:', token ? 'Token exists' : 'No token found');
-        console.log('📡 API Call: GET /getUsers');
-        console.log('📤 Headers:', { Authorization: `Bearer ${token}` });
-        
-        const response = await api.get('/getUsers', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        console.log('✅ Users API Response:', response.data);
-        
-        // Parse the response - handle both formats:
-        // Format 1: ["Name <email>", "Name2 <email2>"]
-        // Format 2: [{name: "Name", email: "email"}, ...]
+        const token = localStorage.getItem('token') || '';
+        const response = await api.get('/getUsers', { headers: { 'Authorization': `Bearer ${token}` } });
         let fetchedUsers = response.data.users || response.data || [];
-        
-        // Check if first item is a string (Format 1)
         if (fetchedUsers.length > 0 && typeof fetchedUsers[0] === 'string') {
-          console.log('📝 Parsing string format: "Name <email>"');
           fetchedUsers = fetchedUsers.map(userString => {
-            // Parse "Name <email>" format
             const match = userString.match(/^(.+?)\s*<(.+?)>$/);
-            if (match) {
-              return {
-                name: match[1].trim(),
-                email: match[2].trim()
-              };
-            }
-            // Fallback if format doesn't match
-            return {
-              name: userString,
-              email: userString
-            };
+            if (match) return { name: match[1].trim(), email: match[2].trim() };
+            return { name: userString, email: userString };
           });
-          console.log('✅ Parsed users:', fetchedUsers);
         }
-        
-        console.log('👥 Fetched users count:', fetchedUsers.length);
         setUsers(fetchedUsers);
       } catch (error) {
-        console.error('❌ Error fetching users:', error);
-        console.error('Error details:', error.response?.data || error.message);
-        // Fallback to collaborators if API fails
-        console.log('🔄 Falling back to collaborators prop');
         setUsers(collaborators || []);
       } finally {
         setLoadingUsers(false);
@@ -438,7 +245,6 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
     try {
       await api.post(`/issues/${username}/${repo}`, formData);
       onSuccess();
@@ -452,114 +258,77 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
 
   const addLabel = () => {
     if (labelInput.trim() && !formData.labels.includes(labelInput.trim())) {
-      setFormData({
-        ...formData,
-        labels: [...formData.labels, labelInput.trim()]
-      });
+      setFormData({ ...formData, labels: [...formData.labels, labelInput.trim()] });
       setLabelInput('');
     }
   };
 
   const removeLabel = (label) => {
-    setFormData({
-      ...formData,
-      labels: formData.labels.filter(l => l !== label)
-    });
+    setFormData({ ...formData, labels: formData.labels.filter(l => l !== label) });
   };
 
   const toggleAssignee = (collaborator) => {
     const exists = formData.assignees.find(a => a.email === collaborator.email);
     if (exists) {
-      setFormData({
-        ...formData,
-        assignees: formData.assignees.filter(a => a.email !== collaborator.email)
-      });
+      setFormData({ ...formData, assignees: formData.assignees.filter(a => a.email !== collaborator.email) });
     } else {
-      setFormData({
-        ...formData,
-        assignees: [...formData.assignees, { name: collaborator.name, email: collaborator.email }]
-      });
+      setFormData({ ...formData, assignees: [...formData.assignees, { name: collaborator.name, email: collaborator.email }] });
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/70 backdrop-blur-sm animate-modal" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div 
-        className="glass-dark rounded-t-2xl sm:rounded-2xl border border-white/10 shadow-2xl w-full sm:max-w-2xl flex flex-col max-h-[95vh] sm:max-h-[90vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header - Fixed at top */}
-        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-black/40 backdrop-blur-sm flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg sm:text-xl font-bold text-white">Create New Issue</h3>
-              <p className="text-xs text-gray-400 hidden sm:block">Fill in the details below</p>
-            </div>
+    <div className="win-modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="win-window" style={{ width: '520px', maxWidth: '95vw', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Title bar */}
+        <div className="win-titlebar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            ➕ Create New Issue — {repo}
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-all flex items-center justify-center"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <button className="win-close-btn" onClick={onClose}>✕</button>
         </div>
 
-        {/* Scrollable Content Area */}
-        <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1">
-          <div className="overflow-y-auto flex-1 min-h-0 px-4 sm:px-6 py-4 sm:py-5 space-y-4 sm:space-y-5 overscroll-contain">
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+          <div style={{ overflowY: 'auto', flex: 1, padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
-                Title <span className="text-red-400">*</span>
-              </label>
+              <div style={{ fontSize: '11px', marginBottom: '3px' }}>Title: <span style={{ color: '#cc0000' }}>*</span></div>
               <input
-                type="text"
-                required
+                type="text" required className="win-input" style={{ width: '100%' }}
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 sm:px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
                 placeholder="Brief description of the issue"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
-                Description <span className="text-red-400">*</span>
-              </label>
+              <div style={{ fontSize: '11px', marginBottom: '3px' }}>Description: <span style={{ color: '#cc0000' }}>*</span></div>
               <textarea
-                required
+                required className="win-input" style={{ width: '100%', minHeight: '80px', resize: 'vertical', fontFamily: 'Tahoma, sans-serif' }}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={4}
-                className="w-full px-3 sm:px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all resize-none"
-                placeholder="Provide detailed information about the issue..."
+                placeholder="Detailed description of the issue..."
               />
             </div>
 
             {/* Priority */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">Priority</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {['low', 'medium', 'high', 'critical'].map((priority) => (
+              <div style={{ fontSize: '11px', marginBottom: '3px' }}>Priority:</div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {['low', 'medium', 'high', 'critical'].map(p => (
                   <button
-                    key={priority}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, priority })}
-                    className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm font-medium transition-all ${
-                      formData.priority === priority
-                        ? 'bg-blue-500 text-white shadow-lg'
-                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
-                    }`}
+                    key={p} type="button"
+                    onClick={() => setFormData({ ...formData, priority: p })}
+                    className="win-btn"
+                    style={{ 
+                      fontFamily: 'Tahoma, sans-serif',
+                      background: formData.priority === p ? '#0a246a' : '#d4d0c8',
+                      color: formData.priority === p ? '#ffffff' : '#000000',
+                    }}
                   >
-                    {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                    {p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>
                 ))}
               </div>
@@ -567,81 +336,68 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
 
             {/* Assignees */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
-                Assign to ({formData.assignees.length} selected)
-              </label>
-              {loadingUsers ? (
-                <div className="glass-dark rounded-lg p-4 border border-white/10 text-center">
-                  <div className="animate-spin w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full mx-auto mb-2"></div>
-                  <p className="text-xs text-gray-400">Loading users...</p>
-                </div>
-              ) : (
-                <div className="space-y-1 max-h-36 sm:max-h-40 overflow-y-auto glass-dark rounded-lg p-2 sm:p-3 border border-white/10">
-                  {users && users.length > 0 ? (
-                    users.map((collab) => (
-                      <label
-                        key={collab.email || collab.id}
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-all"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={formData.assignees.some(a => a.email === collab.email)}
-                          onChange={() => toggleAssignee(collab)}
-                          className="w-4 h-4 rounded border-gray-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800 flex-shrink-0"
-                        />
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0">
-                            {collab.name ? collab.name.charAt(0).toUpperCase() : collab.email ? collab.email.charAt(0).toUpperCase() : '?'}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-white truncate">{collab.name || collab.email || 'Unknown'}</div>
-                            <div className="text-xs text-gray-400 truncate">{collab.email || 'No email'}</div>
-                          </div>
-                        </div>
-                      </label>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-400 text-center py-4">No users available</p>
-                  )}
-                </div>
-              )}
+              <div style={{ fontSize: '11px', marginBottom: '3px' }}>
+                Assign to: ({formData.assignees.length} selected)
+              </div>
+              <div className="win-sunken" style={{ background: '#ffffff', maxHeight: '120px', overflowY: 'auto' }}>
+                {loadingUsers ? (
+                  <div style={{ padding: '12px', textAlign: 'center', fontSize: '11px', color: '#808080' }}>⌛ Loading users...</div>
+                ) : users.length > 0 ? (
+                  users.map((collab) => (
+                    <label
+                      key={collab.email || collab.id}
+                      className="win-list-item"
+                      style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 6px', cursor: 'pointer' }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.assignees.some(a => a.email === collab.email)}
+                        onChange={() => toggleAssignee(collab)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <svg width="12" height="12" viewBox="0 0 20 20" fill="#000080">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                      <span style={{ flex: 1 }}>{collab.name || collab.email}</span>
+                      <span style={{ color: '#0000cc', fontSize: '10px' }}>{collab.email}</span>
+                    </label>
+                  ))
+                ) : (
+                  <div style={{ padding: '8px', color: '#808080', fontSize: '11px' }}>No users available</div>
+                )}
+              </div>
             </div>
 
             {/* Labels */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">Labels</label>
-              <div className="flex gap-2 mb-2">
+              <div style={{ fontSize: '11px', marginBottom: '3px' }}>Labels:</div>
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
                 <input
-                  type="text"
+                  type="text" className="win-input" style={{ flex: 1 }}
                   value={labelInput}
                   onChange={(e) => setLabelInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLabel())}
-                  className="flex-1 min-w-0 px-3 sm:px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
-                  placeholder="Add a label..."
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addLabel())}
+                  placeholder="Type label and press Add..."
                 />
-                <button
-                  type="button"
-                  onClick={addLabel}
-                  className="px-3 sm:px-4 py-2 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-all flex-shrink-0"
-                >
-                  Add
-                </button>
+                <button type="button" className="win-btn" onClick={addLabel} style={{ fontFamily: 'Tahoma, sans-serif' }}>Add</button>
               </div>
               {formData.labels.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
                   {formData.labels.map((label, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 rounded-md text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-2"
+                      style={{ 
+                        fontSize: '11px', padding: '1px 6px', 
+                        background: '#cce0ff', border: '1px solid #0000cc', color: '#000080',
+                        display: 'flex', alignItems: 'center', gap: '4px'
+                      }}
                     >
                       {label}
                       <button
                         type="button"
                         onClick={() => removeLabel(label)}
-                        className="hover:text-white transition-colors"
-                      >
-                        ×
-                      </button>
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '11px', color: '#cc0000', lineHeight: 1 }}
+                      >×</button>
                     </span>
                   ))}
                 </div>
@@ -649,22 +405,16 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
             </div>
           </div>
 
-          {/* Sticky Action Buttons */}
-          <div className="flex gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10 bg-black/40 backdrop-blur-sm flex-shrink-0">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10 transition-all"
-            >
-              Cancel
+          {/* Footer buttons */}
+          <div style={{ 
+            borderTop: '1px solid #808080', padding: '8px 12px',
+            display: 'flex', justifyContent: 'flex-end', gap: '4px',
+            background: '#d4d0c8'
+          }}>
+            <button type="submit" disabled={submitting} className="win-btn win-btn-primary" style={{ fontFamily: 'Tahoma, sans-serif', minWidth: '80px' }}>
+              {submitting ? '⌛ Creating...' : 'Create Issue'}
             </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-blue-500/50 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {submitting ? 'Creating...' : 'Create Issue'}
-            </button>
+            <button type="button" className="win-btn" onClick={onClose} style={{ fontFamily: 'Tahoma, sans-serif' }}>Cancel</button>
           </div>
         </form>
       </div>
@@ -672,7 +422,6 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
   );
 }
 
-// Issue Detail Modal Component (simplified)
 function IssueDetailModal({ issue, onClose, onUpdate }) {
   const [comment, setComment] = useState('');
   const [status, setStatus] = useState(issue.status);
@@ -689,7 +438,6 @@ function IssueDetailModal({ issue, onClose, onUpdate }) {
 
   const handleAddComment = async () => {
     if (!comment.trim()) return;
-
     try {
       await api.post(`/issues/issue/${issue._id}/comment`, {
         author: { name: 'Current User', email: 'user@example.com' },
@@ -703,124 +451,126 @@ function IssueDetailModal({ issue, onClose, onUpdate }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/70 backdrop-blur-sm animate-modal" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="glass-dark rounded-t-2xl sm:rounded-2xl border border-white/10 shadow-2xl w-full sm:max-w-3xl flex flex-col max-h-[95vh] sm:max-h-[90vh]">
-        {/* Header - Fixed */}
-        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-between gap-3 flex-shrink-0">
-          <div className="min-w-0">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-0.5 sm:mb-1 break-words">{issue.title}</h3>
-            <p className="text-xs text-gray-400">
-              Created by {issue.createdBy.name} on {new Date(issue.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-all flex items-center justify-center flex-shrink-0"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    <div className="win-modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="win-window" style={{ width: '600px', maxWidth: '95vw', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Title bar */}
+        <div className="win-titlebar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="#ffff00">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
-          </button>
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              Issue: {issue.title}
+            </span>
+          </div>
+          <button className="win-close-btn" onClick={onClose}>✕</button>
         </div>
 
-        {/* Scrollable body */}
-        <div className="overflow-y-auto flex-1 min-h-0 overscroll-contain">
-          <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6">
-            {/* Status selector */}
+        <div style={{ overflowY: 'auto', flex: 1, padding: '10px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {/* Header info */}
+          <div style={{ fontSize: '11px', color: '#808080', borderBottom: '1px solid #d4d0c8', paddingBottom: '6px' }}>
+            Created by <strong>{issue.createdBy.name}</strong> on {new Date(issue.createdAt).toLocaleDateString()}
+          </div>
+
+          {/* Status */}
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>Status:</div>
+            <div style={{ display: 'flex', gap: '3px' }}>
+              {['open', 'in-progress', 'closed'].map(s => (
+                <button
+                  key={s}
+                  className="win-btn"
+                  onClick={() => handleStatusChange(s)}
+                  style={{ 
+                    fontFamily: 'Tahoma, sans-serif',
+                    background: status === s ? '#0a246a' : '#d4d0c8',
+                    color: status === s ? '#ffffff' : '#000000',
+                  }}
+                >
+                  {s.replace('-', ' ')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>Description:</div>
+            <div className="win-sunken" style={{ background: '#ffffff', padding: '6px 8px', fontSize: '11px', lineHeight: '1.5' }}>
+              {issue.description}
+            </div>
+          </div>
+
+          {/* Assignees */}
+          {issue.assignees.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">Status</label>
-              <div className="flex flex-wrap gap-2">
-                {['open', 'in-progress', 'closed'].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => handleStatusChange(s)}
-                    className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      status === s
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
-                    }`}
+              <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>Assignees:</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                {issue.assignees.map((assignee, idx) => (
+                  <div
+                    key={idx}
+                    className="win-raised"
+                    style={{ padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}
                   >
-                    {s.replace('-', ' ')}
-                  </button>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="#000080">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
+                    {assignee.name || assignee.email}
+                  </div>
                 ))}
               </div>
             </div>
+          )}
 
-            {/* Description */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-200 mb-2">Description</h4>
-              <p className="text-gray-300 text-sm sm:text-base leading-relaxed glass-dark p-3 sm:p-4 rounded-lg border border-white/10 break-words">
-                {issue.description}
-              </p>
+          {/* Comments */}
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Comments ({issue.comments?.length || 0}):
             </div>
-
-            {/* Assignees */}
-            {issue.assignees.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium text-gray-200 mb-2">Assignees</h4>
-                <div className="flex flex-wrap gap-2">
-                  {issue.assignees.map((assignee, idx) => (
-                    <div key={idx} className="flex items-center gap-2 px-3 py-2 glass-dark rounded-lg border border-white/10">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0">
-                        {assignee.name ? assignee.name.charAt(0).toUpperCase() : assignee.email ? assignee.email.charAt(0).toUpperCase() : '?'}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium text-white truncate">{assignee.name || assignee.email || 'Unknown'}</div>
-                        <div className="text-xs text-gray-400 truncate">{assignee.email || 'No email'}</div>
-                      </div>
+            <div className="win-sunken" style={{ background: '#ffffff', maxHeight: '200px', overflowY: 'auto' }}>
+              {issue.comments && issue.comments.length > 0 ? (
+                issue.comments.map((c, idx) => (
+                  <div key={idx} style={{ borderBottom: '1px solid #e8e4dc', padding: '6px 8px' }}>
+                    <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#000080', marginBottom: '2px' }}>
+                      👤 {c.author.name} — <span style={{ color: '#808080', fontWeight: 'normal' }}>{new Date(c.createdAt).toLocaleString()}</span>
                     </div>
-                  ))}
+                    <div style={{ fontSize: '11px' }}>{c.text}</div>
+                  </div>
+                ))
+              ) : (
+                <div style={{ padding: '12px', textAlign: 'center', fontSize: '11px', color: '#808080' }}>
+                  No comments yet.
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          </div>
 
-            {/* Comments */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-200 mb-3">
-                Comments ({issue.comments?.length || 0})
-              </h4>
-              <div className="space-y-3 mb-4">
-                {issue.comments && issue.comments.length > 0 ? (
-                  issue.comments.map((c, idx) => (
-                    <div key={idx} className="glass-dark p-3 sm:p-4 rounded-lg border border-white/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0">
-                          {c.author.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-white truncate">{c.author.name}</div>
-                          <div className="text-xs text-gray-400">
-                            {new Date(c.createdAt).toLocaleString()}
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-300 leading-relaxed break-words">{c.text}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-400 text-center py-4">No comments yet</p>
-                )}
-              </div>
+          {/* Add comment */}
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>Add Comment:</div>
+            <div style={{ display: 'flex', gap: '4px' }}>
+              <input
+                type="text"
+                className="win-input"
+                style={{ flex: 1 }}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
+                placeholder="Type your comment..."
+              />
+              <button className="win-btn" onClick={handleAddComment} style={{ fontFamily: 'Tahoma, sans-serif' }}>Post</button>
             </div>
           </div>
         </div>
 
-        {/* Sticky comment input */}
-        <div className="flex gap-2 px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10 bg-black/40 backdrop-blur-sm flex-shrink-0">
-          <input
-            type="text"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
-            className="flex-1 min-w-0 px-3 sm:px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
-            placeholder="Add a comment..."
-          />
-          <button
-            onClick={handleAddComment}
-            className="px-3 sm:px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex-shrink-0"
-          >
-            Post
-          </button>
+        {/* Footer */}
+        <div style={{ 
+          borderTop: '1px solid #808080', padding: '8px 12px',
+          display: 'flex', justifyContent: 'flex-end', gap: '4px',
+          background: '#d4d0c8'
+        }}>
+          <button className="win-btn win-btn-primary" onClick={onClose} style={{ fontFamily: 'Tahoma, sans-serif' }}>OK</button>
+          <button className="win-btn" onClick={onClose} style={{ fontFamily: 'Tahoma, sans-serif' }}>Close</button>
         </div>
       </div>
     </div>
