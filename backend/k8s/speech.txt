@@ -12,4 +12,5 @@ vscode ex kyu use kiya hia
     kuki agar koi developer a branch x ke y file me change kar raha hia aur usne commit nhi kiya hai changes ko 
     toh agar developer b same file kholta hia wo git pull karne ke baad bhi developer a ka code nhi aega aur wo bhi same file me change kar sakta hai , but the extension will detect the developer working on y file and will notify b that a is working on y file and b should not work on y file. 
 
-5. 
+5. cli , toh agar koi developer locallu kuch change kar raha hia and they want to see how the code looks in a deployed environment without actually pushing the code and going trhought the whole cicd piple they can use the CLI which portforwards their localhost to the internet and can view thier website or product on the internet 
+so anyone can view the website and can review the changes before even pushing the code and deploying it 
