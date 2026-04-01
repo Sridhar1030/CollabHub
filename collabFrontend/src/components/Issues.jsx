@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../api';
 
 export default function Issues({ username, repo, collaborators = [] }) {
@@ -83,25 +84,25 @@ export default function Issues({ username, repo, collaborators = [] }) {
   return (
     <div className="space-y-5">
       {/* Header with Stats */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full"></div>
-            <div className="relative w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-xl">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-xl">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">Issues</h2>
-            <p className="text-sm text-gray-400">Track and manage repository issues</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Issues</h2>
+            <p className="text-xs sm:text-sm text-gray-400">Track and manage repository issues</p>
           </div>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-blue-500/50 transition-all hover:scale-105 flex items-center gap-2"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-blue-500/50 transition-all hover:scale-105 flex items-center justify-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -112,7 +113,7 @@ export default function Issues({ username, repo, collaborators = [] }) {
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div className="glass-dark rounded-xl p-4 border border-white/10">
             <div className="flex items-center justify-between">
               <div>
@@ -178,12 +179,12 @@ export default function Issues({ username, repo, collaborators = [] }) {
       )}
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 glass-dark rounded-xl p-2 border border-white/10 w-fit">
+      <div className="flex items-center gap-2 glass-dark rounded-xl p-1.5 sm:p-2 border border-white/10 w-full sm:w-fit overflow-x-auto">
         {['all', 'open', 'in-progress', 'closed'].map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
               filter === status
                 ? 'bg-blue-500 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -319,8 +320,8 @@ export default function Issues({ username, repo, collaborators = [] }) {
         )}
       </div>
 
-      {/* Create Issue Modal */}
-      {showCreateModal && (
+      {/* Create Issue Modal — portal to body to escape overflow-hidden ancestors */}
+      {showCreateModal && createPortal(
         <CreateIssueModal
           username={username}
           repo={repo}
@@ -331,11 +332,12 @@ export default function Issues({ username, repo, collaborators = [] }) {
             fetchStats();
             setShowCreateModal(false);
           }}
-        />
+        />,
+        document.body
       )}
 
-      {/* Issue Detail Modal */}
-      {selectedIssue && (
+      {/* Issue Detail Modal — portal to body */}
+      {selectedIssue && createPortal(
         <IssueDetailModal
           issue={selectedIssue}
           onClose={() => setSelectedIssue(null)}
@@ -344,7 +346,8 @@ export default function Issues({ username, repo, collaborators = [] }) {
             fetchStats();
             setSelectedIssue(null);
           }}
-        />
+        />,
+        document.body
       )}
     </div>
   );
@@ -480,29 +483,22 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-modal" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/70 backdrop-blur-sm animate-modal" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div 
-        className="glass-dark rounded-2xl border border-white/10 shadow-2xl w-full max-w-2xl" 
-        style={{
-          maxHeight: '90vh', 
-          display: 'flex', 
-          flexDirection: 'column',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
+        className="glass-dark rounded-t-2xl sm:rounded-2xl border border-white/10 shadow-2xl w-full sm:max-w-2xl flex flex-col max-h-[95vh] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header - Fixed at top */}
-        <div className="px-6 py-4 border-b border-white/10 bg-black/40 backdrop-blur-sm flex items-center justify-between" style={{flexShrink: 0, zIndex: 10}}>
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-black/40 backdrop-blur-sm flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white">Create New Issue</h3>
-              <p className="text-xs text-gray-400">Fill in the details below</p>
+              <h3 className="text-lg sm:text-xl font-bold text-white">Create New Issue</h3>
+              <p className="text-xs text-gray-400 hidden sm:block">Fill in the details below</p>
             </div>
           </div>
           <button
@@ -516,153 +512,145 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
         </div>
 
         {/* Scrollable Content Area */}
-        <div 
-          className="overflow-y-auto custom-scrollbar" 
-          style={{
-            flex: '1 1 auto',
-            minHeight: 0,
-            overflowY: 'scroll',
-            WebkitOverflowScrolling: 'touch',
-            position: 'relative'
-          }}
-        >
-          <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
-              Title <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
-              placeholder="Brief description of the issue"
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
-              Description <span className="text-red-400">*</span>
-            </label>
-            <textarea
-              required
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={5}
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all resize-none custom-scrollbar"
-              placeholder="Provide detailed information about the issue..."
-            />
-          </div>
-
-          {/* Priority */}
-          <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">Priority</label>
-            <div className="grid grid-cols-4 gap-2">
-              {['low', 'medium', 'high', 'critical'].map((priority) => (
-                <button
-                  key={priority}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, priority })}
-                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                    formData.priority === priority
-                      ? 'bg-blue-500 text-white shadow-lg'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
-                  }`}
-                >
-                  {priority.charAt(0).toUpperCase() + priority.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Assignees */}
-          <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
-              Assign to ({formData.assignees.length} selected)
-            </label>
-            {loadingUsers ? (
-              <div className="glass-dark rounded-lg p-4 border border-white/10 text-center">
-                <div className="animate-spin w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full mx-auto mb-2"></div>
-                <p className="text-xs text-gray-400">Loading users...</p>
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar glass-dark rounded-lg p-3 border border-white/10">
-                {users && users.length > 0 ? (
-                  users.map((collab) => (
-                    <label
-                      key={collab.email || collab.id}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-all"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.assignees.some(a => a.email === collab.email)}
-                        onChange={() => toggleAssignee(collab)}
-                        className="w-4 h-4 rounded border-gray-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800"
-                      />
-                      <div className="flex items-center gap-2 flex-1">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold">
-                          {collab.name ? collab.name.charAt(0).toUpperCase() : collab.email ? collab.email.charAt(0).toUpperCase() : '?'}
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-white">{collab.name || collab.email || 'Unknown'}</div>
-                          <div className="text-xs text-gray-400">{collab.email || 'No email'}</div>
-                        </div>
-                      </div>
-                    </label>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-400 text-center py-4">No users available</p>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Labels */}
-          <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">Labels</label>
-            <div className="flex gap-2 mb-2">
+        <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1">
+          <div className="overflow-y-auto flex-1 min-h-0 px-4 sm:px-6 py-4 sm:py-5 space-y-4 sm:space-y-5 overscroll-contain">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">
+                Title <span className="text-red-400">*</span>
+              </label>
               <input
                 type="text"
-                value={labelInput}
-                onChange={(e) => setLabelInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLabel())}
-                className="flex-1 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
-                placeholder="Add a label..."
+                required
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-3 sm:px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
+                placeholder="Brief description of the issue"
               />
-              <button
-                type="button"
-                onClick={addLabel}
-                className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-all"
-              >
-                Add
-              </button>
             </div>
-            {formData.labels.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {formData.labels.map((label, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 rounded-md text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-2"
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">
+                Description <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                required
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                rows={4}
+                className="w-full px-3 sm:px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all resize-none"
+                placeholder="Provide detailed information about the issue..."
+              />
+            </div>
+
+            {/* Priority */}
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">Priority</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {['low', 'medium', 'high', 'critical'].map((priority) => (
+                  <button
+                    key={priority}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, priority })}
+                    className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      formData.priority === priority
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
+                    }`}
                   >
-                    {label}
-                    <button
-                      type="button"
-                      onClick={() => removeLabel(label)}
-                      className="hover:text-white transition-colors"
-                    >
-                      ×
-                    </button>
-                  </span>
+                    {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                  </button>
                 ))}
               </div>
-            )}
+            </div>
+
+            {/* Assignees */}
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">
+                Assign to ({formData.assignees.length} selected)
+              </label>
+              {loadingUsers ? (
+                <div className="glass-dark rounded-lg p-4 border border-white/10 text-center">
+                  <div className="animate-spin w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full mx-auto mb-2"></div>
+                  <p className="text-xs text-gray-400">Loading users...</p>
+                </div>
+              ) : (
+                <div className="space-y-1 max-h-36 sm:max-h-40 overflow-y-auto glass-dark rounded-lg p-2 sm:p-3 border border-white/10">
+                  {users && users.length > 0 ? (
+                    users.map((collab) => (
+                      <label
+                        key={collab.email || collab.id}
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-all"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.assignees.some(a => a.email === collab.email)}
+                          onChange={() => toggleAssignee(collab)}
+                          className="w-4 h-4 rounded border-gray-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800 flex-shrink-0"
+                        />
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0">
+                            {collab.name ? collab.name.charAt(0).toUpperCase() : collab.email ? collab.email.charAt(0).toUpperCase() : '?'}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-white truncate">{collab.name || collab.email || 'Unknown'}</div>
+                            <div className="text-xs text-gray-400 truncate">{collab.email || 'No email'}</div>
+                          </div>
+                        </div>
+                      </label>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-400 text-center py-4">No users available</p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Labels */}
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">Labels</label>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={labelInput}
+                  onChange={(e) => setLabelInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLabel())}
+                  className="flex-1 min-w-0 px-3 sm:px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
+                  placeholder="Add a label..."
+                />
+                <button
+                  type="button"
+                  onClick={addLabel}
+                  className="px-3 sm:px-4 py-2 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-all flex-shrink-0"
+                >
+                  Add
+                </button>
+              </div>
+              {formData.labels.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.labels.map((label, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 rounded-md text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-2"
+                    >
+                      {label}
+                      <button
+                        type="button"
+                        onClick={() => removeLabel(label)}
+                        className="hover:text-white transition-colors"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Actions Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-white/10">
+          {/* Sticky Action Buttons */}
+          <div className="flex gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10 bg-black/40 backdrop-blur-sm flex-shrink-0">
             <button
               type="button"
               onClick={onClose}
@@ -678,8 +666,7 @@ function CreateIssueModal({ username, repo, collaborators, onClose, onSuccess })
               {submitting ? 'Creating...' : 'Create Issue'}
             </button>
           </div>
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   );
@@ -716,19 +703,19 @@ function IssueDetailModal({ issue, onClose, onUpdate }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-modal">
-      <div className="glass-dark rounded-2xl border border-white/10 shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto custom-scrollbar">
-        {/* Header */}
-        <div className="sticky top-0 px-6 py-4 border-b border-white/10 bg-black/40 backdrop-blur-sm flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-bold text-white mb-1">{issue.title}</h3>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/70 backdrop-blur-sm animate-modal" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="glass-dark rounded-t-2xl sm:rounded-2xl border border-white/10 shadow-2xl w-full sm:max-w-3xl flex flex-col max-h-[95vh] sm:max-h-[90vh]">
+        {/* Header - Fixed */}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-between gap-3 flex-shrink-0">
+          <div className="min-w-0">
+            <h3 className="text-lg sm:text-xl font-bold text-white mb-0.5 sm:mb-1 break-words">{issue.title}</h3>
             <p className="text-xs text-gray-400">
               Created by {issue.createdBy.name} on {new Date(issue.createdAt).toLocaleDateString()}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-all flex items-center justify-center"
+            className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-all flex items-center justify-center flex-shrink-0"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -736,101 +723,104 @@ function IssueDetailModal({ issue, onClose, onUpdate }) {
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Status selector */}
-          <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">Status</label>
-            <div className="flex gap-2">
-              {['open', 'in-progress', 'closed'].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => handleStatusChange(s)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    status === s
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
-                  }`}
-                >
-                  {s.replace('-', ' ')}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-200 mb-2">Description</h4>
-            <p className="text-gray-300 leading-relaxed glass-dark p-4 rounded-lg border border-white/10">
-              {issue.description}
-            </p>
-          </div>
-
-          {/* Assignees */}
-          {issue.assignees.length > 0 && (
+        {/* Scrollable body */}
+        <div className="overflow-y-auto flex-1 min-h-0 overscroll-contain">
+          <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6">
+            {/* Status selector */}
             <div>
-              <h4 className="text-sm font-medium text-gray-200 mb-2">Assignees</h4>
+              <label className="block text-sm font-medium text-gray-200 mb-2">Status</label>
               <div className="flex flex-wrap gap-2">
-                {issue.assignees.map((assignee, idx) => (
-                  <div key={idx} className="flex items-center gap-2 px-3 py-2 glass-dark rounded-lg border border-white/10">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold">
-                      {assignee.name ? assignee.name.charAt(0).toUpperCase() : assignee.email ? assignee.email.charAt(0).toUpperCase() : '?'}
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-white">{assignee.name || assignee.email || 'Unknown'}</div>
-                      <div className="text-xs text-gray-400">{assignee.email || 'No email'}</div>
-                    </div>
-                  </div>
+                {['open', 'in-progress', 'closed'].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => handleStatusChange(s)}
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      status === s
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
+                    }`}
+                  >
+                    {s.replace('-', ' ')}
+                  </button>
                 ))}
               </div>
             </div>
-          )}
 
-          {/* Comments */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-200 mb-3">
-              Comments ({issue.comments?.length || 0})
-            </h4>
-            <div className="space-y-3 mb-4">
-              {issue.comments && issue.comments.length > 0 ? (
-                issue.comments.map((c, idx) => (
-                  <div key={idx} className="glass-dark p-4 rounded-lg border border-white/10">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
-                        {c.author.name.charAt(0).toUpperCase()}
+            {/* Description */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-200 mb-2">Description</h4>
+              <p className="text-gray-300 text-sm sm:text-base leading-relaxed glass-dark p-3 sm:p-4 rounded-lg border border-white/10 break-words">
+                {issue.description}
+              </p>
+            </div>
+
+            {/* Assignees */}
+            {issue.assignees.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-200 mb-2">Assignees</h4>
+                <div className="flex flex-wrap gap-2">
+                  {issue.assignees.map((assignee, idx) => (
+                    <div key={idx} className="flex items-center gap-2 px-3 py-2 glass-dark rounded-lg border border-white/10">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0">
+                        {assignee.name ? assignee.name.charAt(0).toUpperCase() : assignee.email ? assignee.email.charAt(0).toUpperCase() : '?'}
                       </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-white">{c.author.name}</div>
-                        <div className="text-xs text-gray-400">
-                          {new Date(c.createdAt).toLocaleString()}
-                        </div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-white truncate">{assignee.name || assignee.email || 'Unknown'}</div>
+                        <div className="text-xs text-gray-400 truncate">{assignee.email || 'No email'}</div>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-300 leading-relaxed">{c.text}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-400 text-center py-4">No comments yet</p>
-              )}
-            </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-            {/* Add comment */}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
-                className="flex-1 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
-                placeholder="Add a comment..."
-              />
-              <button
-                onClick={handleAddComment}
-                className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all"
-              >
-                Post
-              </button>
+            {/* Comments */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-200 mb-3">
+                Comments ({issue.comments?.length || 0})
+              </h4>
+              <div className="space-y-3 mb-4">
+                {issue.comments && issue.comments.length > 0 ? (
+                  issue.comments.map((c, idx) => (
+                    <div key={idx} className="glass-dark p-3 sm:p-4 rounded-lg border border-white/10">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0">
+                          {c.author.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-white truncate">{c.author.name}</div>
+                          <div className="text-xs text-gray-400">
+                            {new Date(c.createdAt).toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-300 leading-relaxed break-words">{c.text}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-400 text-center py-4">No comments yet</p>
+                )}
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Sticky comment input */}
+        <div className="flex gap-2 px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10 bg-black/40 backdrop-blur-sm flex-shrink-0">
+          <input
+            type="text"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+            className="flex-1 min-w-0 px-3 sm:px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
+            placeholder="Add a comment..."
+          />
+          <button
+            onClick={handleAddComment}
+            className="px-3 sm:px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex-shrink-0"
+          >
+            Post
+          </button>
         </div>
       </div>
     </div>
