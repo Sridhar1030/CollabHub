@@ -1,7 +1,3 @@
 export default function Layout({ children }) {
-  return (
-    <main className="max-w-[1400px] mx-auto py-8 px-6 relative min-h-screen">
-      {children}
-    </main>
-  )
-} 
+  return <div style={{ maxWidth: '1400px', margin: '0 auto' }}>{children}</div>
+}
