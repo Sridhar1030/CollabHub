@@ -1,31 +1,31 @@
-FROM node:20-alpine
+FROM node:20-alpine AS deps
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Install dependencies (use package.json only to leverage build cache)
-COPY package*.json ./
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts \
+    && npm cache clean --force
 
-# Prefer npm ci when lockfile present; fall back to npm install
-RUN if [ -f package-lock.json ]; then \
-      npm ci --only=production --silent; \
-    else \
-      npm install --only=production --silent; \
-    fi
+# ---------------------------------------------------
+FROM node:20-alpine
 
-# Copy application source
-COPY . .
+RUN apk add --no-cache dumb-init
 
-# Use non-root user for security
-RUN chown -R node:node /usr/src/app
-USER node
-
-# Default environment
 ENV NODE_ENV=production
 ENV PORT=5000
+ENV MONGODB_URI=mongodb+srv://pavanrasal4:pavan164142@cluster0.83uq4.mongodb.net/collabhub
 
-# Expose application port
+WORKDIR /usr/src/app
+
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node . .
+
+USER node
+
 EXPOSE 5000
 
-# Start the server
-CMD ["node","server.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget -qO- http://localhost:5000/health || exit 1
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server.js"]

@@ -11,3 +11,5 @@
 vscode ex kyu use kiya hia 
     kuki agar koi developer a branch x ke y file me change kar raha hia aur usne commit nhi kiya hai changes ko 
     toh agar developer b same file kholta hia wo git pull karne ke baad bhi developer a ka code nhi aega aur wo bhi same file me change kar sakta hai , but the extension will detect the developer working on y file and will notify b that a is working on y file and b should not work on y file. 
+
+5. 
