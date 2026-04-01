@@ -1,0 +1,13 @@
+1. what is git and whats github and what is the difference between them
+2. why are we making this (
+    we are not reinventing the wheel we are simply providning an enterprise level soltuions for the company to host thier own git server rather than rely on github , which may expose thier code to the public and train models with them , so some company or startups may not want thier code to be exposed to the public and they may want to host thier own git server.
+)
+3. what are the features of the project
+4. 3 cheeze explain kar
+    a. git server (github jaise push hota hia , gitolite for security and access control)
+    b. CLI 
+    c. VS Code Extension
+
+vscode ex kyu use kiya hia 
+    kuki agar koi developer a branch x ke y file me change kar raha hia aur usne commit nhi kiya hai changes ko 
+    toh agar developer b same file kholta hia wo git pull karne ke baad bhi developer a ka code nhi aega aur wo bhi same file me change kar sakta hai , but the extension will detect the developer working on y file and will notify b that a is working on y file and b should not work on y file. 
