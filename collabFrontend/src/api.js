@@ -7,7 +7,7 @@ import axios from 'axios';
 // For minikube k8s:          VITE_API_URL=http://127.0.0.1:30500
 //                             (set automatically by setup-k8s-dev.sh)
 // ------------------------------------------------------------
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://collabhub-q4aj.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
