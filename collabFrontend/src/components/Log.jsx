@@ -48,7 +48,7 @@ export default function Log() {
   };
 
   return (
-    <div className="flex gap-6 min-h-screen">
+    <div className="flex gap-6 min-h-screen text-[#e6edf3]">
       <RepositorySidebar 
         repos={repos} 
         selectedRepo={selectedRepo} 

@@ -76,8 +76,8 @@ export default function PodIndicator() {
 		<div className="fixed bottom-5 right-5 z-50 font-mono text-xs select-none">
 			{/* History dropdown */}
 			{showHistory && history.length > 0 && (
-				<div className="mb-2 w-56 rounded-xl bg-gray-800 border border-gray-700 shadow-2xl overflow-hidden">
-					<div className="px-3 py-2 text-gray-400 text-[10px] uppercase tracking-widest border-b border-gray-700">
+				<div className="mb-2 w-56 rounded-xl bg-[#161b22] border border-[#30363d] shadow-2xl overflow-hidden">
+					<div className="px-3 py-2 text-[#7d8590] text-[10px] uppercase tracking-widest border-b border-[#30363d]">
 						Recent pods
 					</div>
 					{history.map((h, i) => {
@@ -86,15 +86,15 @@ export default function PodIndicator() {
 						return (
 							<div
 								key={i}
-								className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-700/60"
+								className="flex items-center gap-2 px-3 py-1.5 hover:bg-[#21262d]"
 							>
 								<span
 									className={`w-2 h-2 rounded-full flex-shrink-0 ${c.dot}`}
 								/>
-								<span className="text-gray-200 flex-1 truncate">
+								<span className="text-[#e6edf3] flex-1 truncate">
 									{s}
 								</span>
-								<span className="text-gray-500 text-[10px]">
+								<span className="text-[#7d8590] text-[10px]">
 									{h.time}
 								</span>
 							</div>
@@ -108,7 +108,7 @@ export default function PodIndicator() {
 				onClick={() => setShowHistory((v) => !v)}
 				title={`Served by: ${podName}\nClick to see history`}
 				className={`
-          flex items-center gap-2 px-3 py-2 rounded-full text-white shadow-lg
+		  flex items-center gap-2 px-3 py-2 rounded-full text-white shadow-lg border border-[#30363d]
           transition-all duration-300 cursor-pointer
           ${offline ? "bg-red-600 ring-2 ring-red-400" : colour.bg}
           ${justChanged ? `scale-110 ring-2 ${colour.ring}` : ""}

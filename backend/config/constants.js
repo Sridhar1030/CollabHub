@@ -10,7 +10,7 @@ const EC2_API_URL = "http://13.232.244.48:3000"; // For local testing, change to
 const EC2_USER = "git"; // or ec2-user for Amazon Linux
 const EC2_IP = "13.232.244.48";
 const PEM_PATH = path.resolve(__dirname, "../newCollabHub.pem"); // .pem file in backend folder
-const PORT = 5000;
+const PORT = 5001;
 
 module.exports = {
 	USER_KEYS,

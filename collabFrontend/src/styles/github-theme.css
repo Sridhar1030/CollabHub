@@ -1,0 +1,163 @@
+:root {
+  --gh-bg-primary: #0d1117;
+  --gh-bg-secondary: #161b22;
+  --gh-bg-tertiary: #21262d;
+  --gh-border-default: #30363d;
+  --gh-border-muted: #21262d;
+  --gh-text-primary: #e6edf3;
+  --gh-text-secondary: #7d8590;
+  --gh-text-muted: #484f58;
+  --gh-accent-blue: #58a6ff;
+  --gh-accent-green: #3fb950;
+  --gh-accent-red: #f85149;
+  --gh-accent-orange: #d29922;
+  --gh-accent-purple: #a371f7;
+  --gh-btn-primary-bg: #238636;
+  --gh-btn-primary-hover: #2ea043;
+  --gh-btn-default-bg: #21262d;
+  --gh-btn-default-border: #30363d;
+  --gh-btn-default-text: #e6edf3;
+
+  --gh-space-xs: 4px;
+  --gh-space-sm: 8px;
+  --gh-space-md: 16px;
+  --gh-space-lg: 24px;
+  --gh-space-xl: 32px;
+  --gh-space-xxl: 48px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--gh-bg-primary);
+  color: var(--gh-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+::selection {
+  background: rgba(88, 166, 255, 0.25);
+}
+
+a {
+  color: var(--gh-accent-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--gh-text-primary);
+  font-weight: 600;
+}
+
+input,
+textarea,
+select {
+  background: var(--gh-bg-primary);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 6px;
+  color: var(--gh-text-primary);
+  padding: 5px 12px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--gh-text-secondary);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--gh-accent-blue);
+  outline-offset: 0;
+  border-color: var(--gh-accent-blue);
+}
+
+button {
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 5px 16px;
+  cursor: pointer;
+}
+
+pre,
+code,
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+pre {
+  background: var(--gh-bg-secondary);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 6px;
+  padding: var(--gh-space-md);
+}
+
+.glass,
+.glass-dark {
+  background: var(--gh-bg-secondary);
+  border: 1px solid var(--gh-border-default);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.hover-glass:hover {
+  background: var(--gh-bg-tertiary);
+  border-color: var(--gh-border-default);
+}
+
+.btn-github {
+  background: var(--gh-btn-default-bg);
+  border: 1px solid var(--gh-btn-default-border);
+  color: var(--gh-btn-default-text);
+  border-radius: 6px;
+}
+
+.btn-github:hover {
+  background: #30363d;
+  border-color: #484f58;
+}
+
+.btn-primary {
+  background: var(--gh-btn-primary-bg);
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  color: #fff;
+  border-radius: 6px;
+}
+
+.btn-primary:hover {
+  background: var(--gh-btn-primary-hover);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}

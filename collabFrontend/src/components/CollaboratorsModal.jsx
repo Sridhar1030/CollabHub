@@ -34,23 +34,23 @@ export default function CollaboratorsModal({ isOpen, onClose, collaborators }) {
 
   return createPortal(
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
       <div 
         ref={modalRef}
-        className="bg-gray-800 rounded-xl border border-gray-700 p-6 w-full max-w-md relative animate-modal"
+        className="bg-[#161b22] rounded-xl border border-[#30363d] p-6 w-full max-w-md relative animate-modal shadow-[0_16px_32px_rgba(1,4,9,0.85)]"
       >
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center space-x-2">
-            <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-[#58a6ff]" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
             </svg>
-            <h3 className="text-lg font-semibold text-white">Repository Collaborators</h3>
+            <h3 className="text-lg font-semibold text-[#e6edf3]">Repository Collaborators</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-[#7d8590] hover:text-[#e6edf3] transition-colors"
             aria-label="Close modal"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,19 +67,19 @@ export default function CollaboratorsModal({ isOpen, onClose, collaborators }) {
             return (
               <div
                 key={index}
-                className="bg-gray-700 border border-gray-600 rounded-lg p-4 text-gray-300 hover:bg-gray-650 transition-colors"
+                className="bg-[#21262d] border border-[#30363d] rounded-md p-4 text-[#7d8590] hover:bg-[#161b22] transition-colors"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-[#161b22] border border-[#30363d] rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-lg font-medium">
                       {username[0]?.toUpperCase() || '?'}
                     </span>
                   </div>
                   <div className="min-w-0">
-                    <div className="font-medium text-white text-lg truncate">
+                    <div className="font-medium text-[#e6edf3] text-lg truncate">
                       {username || 'Unknown User'}
                     </div>
-                    <div className="text-sm text-gray-400 truncate">{email}</div>
+                    <div className="text-sm text-[#7d8590] truncate">{email}</div>
                   </div>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function CollaboratorsModal({ isOpen, onClose, collaborators }) {
           })}
 
           {collaborators.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-[#7d8590]">
               No collaborators found
             </div>
           )}
@@ -96,7 +96,7 @@ export default function CollaboratorsModal({ isOpen, onClose, collaborators }) {
         <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 bg-[#21262d] border border-[#30363d] text-[#e6edf3] rounded-md hover:bg-[#30363d] transition-colors"
           >
             Close
           </button>

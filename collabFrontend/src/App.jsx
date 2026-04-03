@@ -8,14 +8,14 @@ import './App.css'
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-900">
-        {/* Subtle gradient background */}
-        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 opacity-50 pointer-events-none"></div>
+      <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
+        {/* Subtle textured backdrop */}
+        <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,#161b22_0%,#0d1117_55%)]"></div>
         
         {/* Animated background dots */}
-        <div className="fixed inset-0 opacity-10 pointer-events-none">
+        <div className="fixed inset-0 opacity-20 pointer-events-none">
           <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(96, 165, 250, 0.4) 1px, transparent 0)`,
+            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(88, 166, 255, 0.22) 1px, transparent 0)`,
             backgroundSize: '48px 48px'
           }}></div>
         </div>

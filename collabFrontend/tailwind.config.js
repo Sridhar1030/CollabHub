@@ -6,6 +6,48 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        gh: {
+          bg: {
+            primary: '#0d1117',
+            secondary: '#161b22',
+            tertiary: '#21262d',
+          },
+          border: {
+            default: '#30363d',
+            muted: '#21262d',
+          },
+          text: {
+            primary: '#e6edf3',
+            secondary: '#7d8590',
+            muted: '#484f58',
+          },
+          accent: {
+            blue: '#58a6ff',
+            green: '#3fb950',
+            red: '#f85149',
+            orange: '#d29922',
+            purple: '#a371f7',
+          },
+          button: {
+            primary: '#238636',
+            primaryHover: '#2ea043',
+            default: '#21262d',
+          },
+        },
+      },
+      fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Noto Sans', 'Helvetica', 'Arial', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
+      },
+      spacing: {
+        xs: '4px',
+        sm: '8px',
+        md: '16px',
+        lg: '24px',
+        xl: '32px',
+        xxl: '48px',
+      },
       keyframes: {
         'modal-appear': {
           '0%': { opacity: '0', transform: 'scale(0.95)' },

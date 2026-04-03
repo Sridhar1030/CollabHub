@@ -48,9 +48,9 @@ export default function RepositoryTabs({ logs, selectedRepo }) {
   ];
 
   return (
-    <div className="glass-dark rounded-xl overflow-hidden shadow-glass-lg animate-slide-down">
+    <div className="glass-dark rounded-lg overflow-hidden animate-slide-down">
       {/* Tab Headers - GitHub Style */}
-      <div className="border-b border-white/10">
+      <div className="border-b border-[#30363d]">
         <div className="flex px-6">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -65,12 +65,12 @@ export default function RepositoryTabs({ logs, selectedRepo }) {
                 }}
                 className={`relative py-4 px-5 border-b-2 font-semibold text-sm flex items-center space-x-2 transition-all duration-200 cursor-pointer group ${
                   isActive
-                    ? 'border-blue-500 text-white'
-                    : 'border-transparent text-gray-400 hover:text-white hover:border-white/20'
+                    ? 'border-[#f78166] text-[#e6edf3]'
+                    : 'border-transparent text-[#7d8590] hover:text-[#e6edf3] hover:border-[#30363d]'
                 }`}
                 style={{ zIndex: 10 }}
               >
-                <span className={`${isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-blue-500'} transition-colors`}>
+                <span className={`${isActive ? 'text-[#58a6ff]' : 'text-[#7d8590] group-hover:text-[#58a6ff]'} transition-colors`}>
                   {tab.icon}
                 </span>
                 <span>{tab.name}</span>
